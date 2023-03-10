@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version files.
+ * Settings  the block.
  *
  * @package     block_recommender
  * @author      2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
@@ -23,11 +23,26 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->component = 'block_recommender';
-$plugin->release = '0.1.0';
-$plugin->version = 2022140903;
-$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+// if ($hassiteconfig) {
+    if ($ADMIN->fulltree) {
 
+        $settings->add(
+            new admin_setting_configcheckbox(
+                'block_recommender_allowhtml',
+                get_string('allowhtml', 'block_recommender'),
+                get_string('allowhtml_desc', 'block_recommender'),
+                0)
+        );
+
+        $settings->add(
+            new admin_setting_configtext(
+                'block_recommender_apikey',
+            new lang_string('apikey', 'block_recommender'),
+            new lang_string('apikey_des', 'block_recommender'), null, PARAM_TEXT),
+        );
+    }
+
+// $ADMIN->add('blockrecommender', $settingspage);
+// }

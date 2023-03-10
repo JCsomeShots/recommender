@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version files.
+ * Lib in the block.
  *
  * @package     block_recommender
  * @author      2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
@@ -23,11 +23,12 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_recommender';
-$plugin->release = '0.1.0';
-$plugin->version = 2022140903;
-$plugin->requires = 2021051700;
-$plugin->maturity = MATURITY_ALPHA;
+defined('MOODLE_INTERNAL') || die;
 
+require_once(__DIR__.'/../../../../config.php');
+require_login();
+
+function get_organization($data){
+    print_object($data);
+}

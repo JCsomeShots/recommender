@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Bloque de recomendador';
+$string['pluginname'] = 'Recomendador';
 
 $string['recommender'] = 'Recomendador';
 $string['recommender:addinstance'] = 'Añade un nuevo Recomendador';

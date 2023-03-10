@@ -26,9 +26,25 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Recommender Block';
+$string['pluginname'] = 'Recommender';
 
 $string['recommender'] = 'Recommender';
 $string['recommender:addinstance'] = 'Add a new new Recommender';
 $string['recommender:myaddinstance'] = 'Add a new new Recommender Block to the My Moodle page';
+
+// Edit form.
+$string['blockstring'] = 'Recommender block';
+$string['blocktitle'] = 'Recommender block';
+$string['defaulttitle'] = 'Recommender block';
+$string['defaulttext'] = 'Recommender block';
+$string['blockdisabled'] = 'Disabled block';
+$string['blockdis'] = 'Disabled this block';
+$string['blockdisabled'] = 'Disabled block';
+$string['blockdis'] = 'Disabled this block';
+
+// Settings.
+$string['apikey'] = 'APIKey';
+$string['apikey_des'] = 'Insert the APIKey';
+$string['allowhtml'] = 'Disabled html';
+$string['allowhtml_desc'] = 'Disabled html in recommender block';
 
