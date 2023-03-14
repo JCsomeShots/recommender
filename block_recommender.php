@@ -47,19 +47,28 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
+        global $DB;
+
         if ($this->config->disabled) {
             return null;
         } else if ($this->content !== null) {
             return $this->content;
         }
 
-        $this->content = new stdClass;
-        if (!empty($this->config->text)) {
-            $this->content->text = $this->config->text;
-        } else {
-            $this->content->text = '<b>Recommender</b> desde Moodle!';
+        $content = '';
+        $courses = $DB->get_records('course');
+        foreach($courses as $course){
+            $content .= $course->fullname . ' :   ' . strip_tags($course->summary) .'<br>';        
         }
-        $this->content->footer = '<i>All rights reserved</i>';
+        $this->content = new stdClass;
+        $this->content->text = $content;
+        // if (!empty($this->config->text)) {
+        // }
+        //     $this->content->text = $this->config->text;
+        // } else {
+        //     $this->content->text = $content;
+        // }
+        $this->content->footer = '<br><i>All rights reserved </i><strong>Eurecat.dev</strong>';
 
         return $this->content;
     }

@@ -42,6 +42,10 @@ defined('MOODLE_INTERNAL') || die;
             new lang_string('apikey', 'block_recommender'),
             new lang_string('apikey_des', 'block_recommender'), null, PARAM_TEXT),
         );
+        // $settings->add(new admin_setting_configcheckbox(
+        //     'block_testblock/showcourses', 
+        //     get_string('showcourses', 'block_testblock'), get_string('coursesinstead', 'block_testblock'), 0
+        // ));
     }
 
 // $ADMIN->add('blockrecommender', $settingspage);
