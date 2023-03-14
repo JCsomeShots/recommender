@@ -47,7 +47,7 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $DB;
+        global $DB, $CFG;
 
         if ($this->config->disabled) {
             return null;
@@ -56,9 +56,11 @@ class block_recommender extends block_base {
         }
 
         $content = '';
-        $courses = $DB->get_records('course');
+        // $courses = $DB->get_records('course');
+        $courses = $DB->get_records_sql('SELECT * FROM {course} ORDER BY RAND() LIMIT 7');
+
         foreach($courses as $course){
-            $content .= $course->fullname . ' :   ' . strip_tags($course->summary) .'<br>';        
+            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname . '</a> :   ' . strip_tags($course->summary) .'<br>';        
         }
         $this->content = new stdClass;
         $this->content->text = $content;
