@@ -60,7 +60,14 @@ class block_recommender extends block_base {
         $courses = $DB->get_records_sql('SELECT * FROM {course} ORDER BY RAND() LIMIT 7');
 
         foreach($courses as $course){
-            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname . '</a> :   ' . strip_tags($course->summary) .'<br>';        
+            // $words = mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1');
+            // $words = utf8_encode($course->summary);
+            $words = strip_tags($course->summary);
+            $words = str_word_count($words, 1); // convert the description into an array.
+            $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
+
+            // $content = $summary;
+            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname . '</a> :   ' . $summary .'<br>';        
         }
         $this->content = new stdClass;
         $this->content->text = $content;
