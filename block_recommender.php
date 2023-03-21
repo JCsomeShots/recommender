@@ -191,4 +191,13 @@ class block_recommender extends block_base {
         // Default implementation defined in the main class.
         // return parent::instance_config_save($data,$nolongerused);
     }
+
+    public function get_cover_images($id){
+        $courseid = $id;
+        $course = get_course($courseid);
+        $coverurl = $course->get_formatted_intro(true, ['noclean' => true, 'para' => false, 'overflowdiv' => false]);
+        preg_match_all('/<img.+src=[\'"](?P<src>.+?)[\'"].*>/i', $coverurl, $matches);
+        $coverimg = $matches['src'][0];
+        return $coverimg;
+    }
 }
