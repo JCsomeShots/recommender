@@ -22,3 +22,4 @@
  * @copyright   2023 JuanCarlo Castillo & Eurecat.dev
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+

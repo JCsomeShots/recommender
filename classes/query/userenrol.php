@@ -26,12 +26,16 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-global $DB;
-$sql = "SELECT ue.userid, ue.enrolid, c.fullname
-        FROM {user_enrolments} ue
-        JOIN {enrol} e ON e.id = ue.enrolid
-        JOIN {course} c ON c.id = e.courseid";
-$result = $DB->get_records_sql($sql);
-foreach ($result as $row) {
-    echo "El usuario con ID " . $row->userid . " está inscrito en el curso " . $row->fullname . " (ID de inscripción: " . $row->enrolid . ")<br>";
+
+function printquery() {
+    global $DB;
+
+    $sql = "SELECT ue.userid, ue.enrolid, c.fullname, c.summary
+            FROM {user_enrolments} ue
+            JOIN {enrol} e ON e.id = ue.enrolid
+            JOIN {course} c ON c.id = e.courseid";
+    $result = $DB->get_records_sql($sql);
+    foreach ($result as $row) {
+        echo "the user ID " . $row->userid . " is enrol in" . $row->fullname . " (enrollment ID : " . $row->enrolid . "), with this description: " . $row->summary . "<br>";
+    }
 }

@@ -18,12 +18,19 @@
  * Main file.
  *
  * @package   block_recommender
- * @author      2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
- * @copyright   2023 JuanCarlo Castillo & Eurecat.dev
+ * @author    2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
+ * @copyright 2023 JuanCarlo Castillo & Eurecat.dev
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot. '/blocks/recommender/classes/event/organization.php');
+require_once("{$CFG->dirroot}/blocks/recommender/classes/event/organization.php");
+require_once($CFG->dirroot."/blocks/recommender/classes/event/organization.php");
+require_once($CFG->libdir."/accesslib.php");
+require_once("{$CFG->libdir}/accesslib.php");
+require_once($CFG->libdir."/blocklib.php");
+require_once("{$CFG->libdir}/blocklib.php");
+require_once(__DIR__.'/../../config.php');
+
 
 class block_recommender extends block_base {
 
@@ -47,7 +54,7 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $DB, $CFG;
+        global $DB, $CFG, $PAGE;
 
         if ($this->config->disabled) {
             return null;
@@ -56,30 +63,68 @@ class block_recommender extends block_base {
         }
 
         $content = '';
-        // $courses = $DB->get_records('course');
         $courses = $DB->get_records_sql('SELECT * FROM {course} ORDER BY RAND() LIMIT 7');
 
-        foreach($courses as $course){
-            // $words = mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1');
-            // $words = utf8_encode($course->summary);
-            $words = strip_tags($course->summary);
+        
+        $instanceblock = $this->instance;
+        //******************** */
+        
+        foreach ($courses as $course) {
+            $words = strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1'));
             $words = str_word_count($words, 1); // convert the description into an array.
             $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
+            
+    if ($instanceblock->defaultregion == 'content') {
+        // $content .= '<div class="card-text d-flex">';
+        $content .= '<div class="card w-25">';
+        $content .= '<div class ="card-body"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+        $content .= '<p class = "card-text mb-0">'.$course->fullname . '</p>';
+        $content .= '<small class = "text-muted">'. $summary . '</small>';
+        $content .= '</a></div>';
+        $content .= '</div>';
+    } else {
+        $content .= '<div class="card w-100">';
+        $content .= '<div class ="card-body"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+        $content .= '<p class = "card-text mb-0">'.$course->fullname . '</p>';
+        $content .= '<small class = "text-muted">'. $summary . '</small>';
+        $content .= '</a></div>';
+        $content .= '</div>';
+        // $content .= '</div>';
+    }
+}
 
-            // $content = $summary;
-            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname . '</a> :   ' . $summary .'<br>';        
-        }
-        $this->content = new stdClass;
-        $this->content->text = $content;
-        // if (!empty($this->config->text)) {
-        // }
-        //     $this->content->text = $this->config->text;
-        // } else {
-        //     $this->content->text = $content;
-        // }
-        $this->content->footer = '<br><i>All rights reserved </i><strong>Eurecat.dev</strong>';
+// if ((!isloggedin() || isguestuser() )) {
+
+    $this->content = new stdClass();
+    $this->content->text = $content;
+    // $this->content->footer = '<br><i>All rights reserved </i><strong>Eurecat.dev</strong>';
+// }
 
         return $this->content;
+    }
+
+    /**
+     * Get an array of all region names on this page where a block may appear
+     *
+     * @return array the internal names of the regions on this page where block may appear.
+     */
+    public function get_regions() {
+        if (is_null($this->defaultregion)) {
+            $this->page->initialise_theme_and_output();
+        }
+        return array_keys($this->regions);
+    }
+    /**
+     * Get the region name of the region blocks are added to by default
+     *
+     * @return string the internal names of the region where new blocks are added
+     * by default, and where any blocks from an unrecognised region are shown.
+     * (Imagine that blocks were added with one theme selected, then you switched
+     * to a theme with different block positions.)
+     */
+    public function get_default_region() {
+        $this->page->initialise_theme_and_output();
+        return $this->defaultregion;
     }
 
     /**
@@ -105,6 +150,15 @@ class block_recommender extends block_base {
      */
     public function instance_allow_multiple() {
         return true;
+    }
+
+    /**
+     * Set the applicable formats for this block to all
+     *
+     * @return array
+     */
+    public function applicable_formats() : array {
+        return ['all' => true];
     }
 
     /**
