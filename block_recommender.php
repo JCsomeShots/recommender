@@ -29,8 +29,11 @@ require_once($CFG->libdir."/accesslib.php");
 require_once("{$CFG->libdir}/accesslib.php");
 require_once($CFG->libdir."/blocklib.php");
 require_once("{$CFG->libdir}/blocklib.php");
+// require_once($CFG->dirroot."/blocks/recommender/classes/event/registerclick.php");
 require_once(__DIR__.'/../../config.php');
 
+// $PAGE->requires->jquery();
+// $PAGE->requires->js('/blocks/recommender/amd/jquery.js');
 
 class block_recommender extends block_base {
 
@@ -45,7 +48,7 @@ class block_recommender extends block_base {
     /**
      * To check if the block has config.
      */
-    public function  has_config() {
+    public function has_config() {
         return  true;
     }
 
@@ -53,37 +56,45 @@ class block_recommender extends block_base {
      * To get the content for this block.
      * @return Mixed $this->content.
      */
-
-
     public function get_content() {
-        global $DB, $CFG, $PAGE;
+        global $DB, $CFG, $USER;
+
+        $this->page->requires->jquery();
+        $this->page->requires->js('/blocks/recommender/amd/src/register.js');
+
+
     
         if ($this->config->disabled) {
             return null;
         } else if ($this->content !== null) {
             return $this->content;
         }
-    
+
         $content = '';
-        $limit = $this->instance->defaultregion == 'content' ? 7 : 4;
-        $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY RAND() LIMIT $limit");
+        $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
+        $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY id LIMIT $limit");
     
         $instanceblock = $this->instance;
     
         if ($instanceblock->defaultregion == 'content') {
-            $content .= '<div class="card-deck">';
+            $content .= '<div class="card-deck justify-content-center">';
         }
     
         foreach ($courses as $i => $course) {
             $words = strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1'));
             $words = str_word_count($words, 1); // convert the description into an array.
             $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
-    
-            $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-4' : 'col-sm-12';
-    
+
+            // $summary = implode(' ', array_slice(str_word_count(strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1')), 1), 0, 6)); 
+
+            $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-3' : 'col-sm-12';
+
             $content .= '<div class="'.$card_class.'">';
             $content .= '<div class="card mb-3 h-100">';
-            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'" style="text-decoration: none;">';
+
+            // $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
+            $content .= '<a href="#" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
+
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
             $content .= '<p class="card-text text-dark">'.$summary.'</p>';
@@ -96,7 +107,7 @@ class block_recommender extends block_base {
                 break;
             }
     
-            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 3 == 0) {
+            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 4 == 0) {
                 $content .= '</div><div class="card-deck">';
             }
         }
@@ -110,7 +121,7 @@ class block_recommender extends block_base {
     
         return $this->content;
     }
-    
+
 
 /********* some notes  */
 // $event = \block_my_courses\event\course_clicked::create(array(
