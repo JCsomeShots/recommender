@@ -62,8 +62,6 @@ class block_recommender extends block_base {
         $this->page->requires->jquery();
         $this->page->requires->js('/blocks/recommender/amd/src/register.js');
 
-
-    
         if ($this->config->disabled) {
             return null;
         } else if ($this->content !== null) {
@@ -71,8 +69,8 @@ class block_recommender extends block_base {
         }
 
         $content = '';
-        $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
-        $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY id LIMIT $limit");
+        $limit = $this->instance->defaultregion == 'content' ? 5 : 4;
+        $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY RAND() LIMIT $limit");
     
         $instanceblock = $this->instance;
     
@@ -98,8 +96,8 @@ class block_recommender extends block_base {
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
             $content .= '<p class="card-text text-dark">'.$summary.'</p>';
-            $content .= '</a>';
             $content .= '</div>';
+            $content .= '</a>';
             $content .= '</div>';
             $content .= '</div>';
     
@@ -107,8 +105,10 @@ class block_recommender extends block_base {
                 break;
             }
     
-            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 4 == 0) {
-                $content .= '</div><div class="card-deck">';
+            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 3 == 0) {
+                $content .= '</div><div class="card-deck justify-content-center">';
+            } else if ($i == $limit - 1) {
+                $content .= '</div>';
             }
         }
     
