@@ -53,55 +53,74 @@ class block_recommender extends block_base {
      * To get the content for this block.
      * @return Mixed $this->content.
      */
+
+
     public function get_content() {
         global $DB, $CFG, $PAGE;
-
+    
         if ($this->config->disabled) {
             return null;
         } else if ($this->content !== null) {
             return $this->content;
         }
-
+    
         $content = '';
-        $courses = $DB->get_records_sql('SELECT * FROM {course} ORDER BY RAND() LIMIT 7');
-
-        
+        $limit = $this->instance->defaultregion == 'content' ? 7 : 4;
+        $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY RAND() LIMIT $limit");
+    
         $instanceblock = $this->instance;
-        //******************** */
-        
-        foreach ($courses as $course) {
+    
+        if ($instanceblock->defaultregion == 'content') {
+            $content .= '<div class="card-deck">';
+        }
+    
+        foreach ($courses as $i => $course) {
             $words = strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1'));
             $words = str_word_count($words, 1); // convert the description into an array.
             $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
-            
-    if ($instanceblock->defaultregion == 'content') {
-        // $content .= '<div class="card-text d-flex">';
-        $content .= '<div class="card w-25">';
-        $content .= '<div class ="card-body"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $content .= '<p class = "card-text mb-0">'.$course->fullname . '</p>';
-        $content .= '<small class = "text-muted">'. $summary . '</small>';
-        $content .= '</a></div>';
-        $content .= '</div>';
-    } else {
-        $content .= '<div class="card w-100">';
-        $content .= '<div class ="card-body"><a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $content .= '<p class = "card-text mb-0">'.$course->fullname . '</p>';
-        $content .= '<small class = "text-muted">'. $summary . '</small>';
-        $content .= '</a></div>';
-        $content .= '</div>';
-        // $content .= '</div>';
-    }
-}
-
-// if ((!isloggedin() || isguestuser() )) {
-
-    $this->content = new stdClass();
-    $this->content->text = $content;
-    // $this->content->footer = '<br><i>All rights reserved </i><strong>Eurecat.dev</strong>';
-// }
-
+    
+            $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-4' : 'col-sm-12';
+    
+            $content .= '<div class="'.$card_class.'">';
+            $content .= '<div class="card mb-3 h-100">';
+            $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'" style="text-decoration: none;">';
+            $content .= '<div class="card-body">';
+            $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+            $content .= '<p class="card-text text-dark">'.$summary.'</p>';
+            $content .= '</a>';
+            $content .= '</div>';
+            $content .= '</div>';
+            $content .= '</div>';
+    
+            if ($i == 3 && $instanceblock->defaultregion != 'content') {
+                break;
+            }
+    
+            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 3 == 0) {
+                $content .= '</div><div class="card-deck">';
+            }
+        }
+    
+        if ($instanceblock->defaultregion == 'content') {
+            $content .= '</div>';
+        }
+    
+        $this->content = new stdClass();
+        $this->content->text = $content;
+    
         return $this->content;
     }
+    
+
+/********* some notes  */
+// $event = \block_my_courses\event\course_clicked::create(array(
+//     'objectid' => $course->id,
+//     'context' => $PAGE->context,
+// ));
+// $event->add_record_snapshot('course', $course);
+// $event->trigger();
+
+
 
     /**
      * Get an array of all region names on this page where a block may appear
