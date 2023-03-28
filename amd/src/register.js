@@ -26,18 +26,20 @@
 // *
 
 
-function registerClick(user_id, course_id) {
-    alert([user_id, course_id]);
-    // $(document).ready(function() {
+function registerClick(userid, courseid) {
+    u = userid.toString();
+    c = courseid.toString();
+    alert([ u, c]);
+    $(document).ready(function() {
         $.ajax({
             // type: "POST",
             url: "blocks/recommender/classes/event/registerclick.php",
-            data: { user_id, course_id},
+            data: { u, c},
             success: function(data) {
                 console.log(data);
             },
         })
-    // });
+    });
 }
 
 

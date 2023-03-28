@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define Capabilities
+ * Define Observers.
  *
  * @package     block_recommender
  * @author      2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
@@ -25,29 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$observers = array(
 
-    'block/recommender:myaddinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/my:manageblocks'
+    array(
+        'eventname' => '\core\event\user_click ',
+        'callback' => '\block_recommender\observer::course_deleted',
     ),
-
-    'block/recommender:addinstance' => array(
-        'riskbitmask' => RISK_SPAM | RISK_XSS,
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-
-        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    array(
+        'eventname'   => '\core\event\user_loggedout',
+        'callback'    => '\block_recommender\observer::user_loggedout',
     ),
 );
-

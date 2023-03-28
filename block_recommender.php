@@ -29,11 +29,9 @@ require_once($CFG->libdir."/accesslib.php");
 require_once("{$CFG->libdir}/accesslib.php");
 require_once($CFG->libdir."/blocklib.php");
 require_once("{$CFG->libdir}/blocklib.php");
-// require_once($CFG->dirroot."/blocks/recommender/classes/event/registerclick.php");
+require_once($CFG->dirroot."/blocks/recommender/classes/event/registerclick.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
 require_once(__DIR__.'/../../config.php');
-
-// $PAGE->requires->jquery();
-// $PAGE->requires->js('/blocks/recommender/amd/jquery.js');
 
 class block_recommender extends block_base {
 
@@ -62,6 +60,8 @@ class block_recommender extends block_base {
         $this->page->requires->jquery();
         $this->page->requires->js('/blocks/recommender/amd/src/register.js');
 
+        $cards_per_row = 3;
+
         if ($this->config->disabled) {
             return null;
         } else if ($this->content !== null) {
@@ -69,7 +69,7 @@ class block_recommender extends block_base {
         }
 
         $content = '';
-        $limit = $this->instance->defaultregion == 'content' ? 5 : 4;
+        $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
         $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY RAND() LIMIT $limit");
     
         $instanceblock = $this->instance;
@@ -83,15 +83,14 @@ class block_recommender extends block_base {
             $words = str_word_count($words, 1); // convert the description into an array.
             $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
 
-            // $summary = implode(' ', array_slice(str_word_count(strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1')), 1), 0, 6)); 
-
             $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-3' : 'col-sm-12';
 
             $content .= '<div class="'.$card_class.'">';
             $content .= '<div class="card mb-3 h-100">';
 
-            // $content .= '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
-            $content .= '<a href="#" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
+            // $courseurl = $CFG->wwwroot.'/course/view.php?id='.$course->id;
+            $courseurl  = '#';
+            $content .= '<a href="'.$courseurl.'" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
 
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
@@ -105,7 +104,7 @@ class block_recommender extends block_base {
                 break;
             }
     
-            if ($instanceblock->defaultregion == 'content' && ($i + 1) % 3 == 0) {
+            if ($instanceblock->defaultregion == 'content' && ($i + 1) % $cards_per_row == 0) {
                 $content .= '</div><div class="card-deck justify-content-center">';
             } else if ($i == $limit - 1) {
                 $content .= '</div>';
@@ -184,7 +183,6 @@ class block_recommender extends block_base {
 
     /**
      * Set the applicable formats for this block to all
-     *
      * @return array
      */
     public function applicable_formats() : array {
@@ -197,13 +195,16 @@ class block_recommender extends block_base {
     public function instance_config_save($data, $nolongerused = false) {
         global $CFG;
         
-        if (!empty($CFG->block_recomender_allowhtml)) {
-            // && $CFG->block_helloworld_allowhtml == '1'
-            $data->text = strip_tags($data->text);
-        } 
-    
+        // if (!empty($CFG->block_recomender_allowhtml)) {
+        //     $data->text = strip_tags($data->text);
+        // } 
         // Default implementation defined in the main class.
-        return parent::instance_config_save($data,$nolongerused);
+        // return parent::instance_config_save($data,$nolongerused);
+        if ( $this->instance->defaultregion != 'content') {
+        } else {
+            $instanceconfig = $this->instance_config();
+            $instanceconfig->defaultweight = 0;
+        }
     }
 
     /**

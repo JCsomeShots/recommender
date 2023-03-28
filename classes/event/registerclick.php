@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lib in the block.
+ * Save clicks from user.
  *
  * @package     block_recommender
  * @author      2023 JuanCarlo Castillo <juancarlo.castillo20@gmail.com>
@@ -29,20 +29,20 @@ defined('MOODLE_INTERNAL') || die;
 require_once(__DIR__.'/../../../../config.php');
 require_login();
 
-    $idcourse = optional_param('course_id', null, PARAM_INT);
-    $iduser = optional_param('user_id', null, PARAM_INT);
+    $idcourse = optional_param('c', null, PARAM_INT);
+    $iduser = optional_param('u', null, PARAM_INT);
 
     global $DB;
 
-    $precheck = $DB->record_exists('block_recommender_clicks', array('rating' => $iduser));
+    $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
 
     // if ($precheck == false) {
     // }
     
-    $record = new stdClass();
-    $record->userid = $iduser;
-    $record->courses = $idcourse;
-    $record->timemodified = time();
-    $DB->insert_record('block_recommender_clicks', $record);
+    // $record = new stdClass();
+    // $record->userid = $iduser;
+    // $record->courses = $idcourse;
+    // $record->timemodified = time();
+    // $DB->insert_record('block_recommender_clicks', $record);
 
 echo 'sucess';
