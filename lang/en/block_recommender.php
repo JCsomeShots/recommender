@@ -45,11 +45,13 @@ $string['blockdis'] = 'Disabled this block';
 // Settings.
 $string['apikey'] = 'APIKey';
 $string['apikey_des'] = 'Insert the APIKey';
-// $string['email'] = 'E-mail';
-// $string['email_des'] = 'Insert your e-mail / Optional';
+$string['email'] = 'E-mail';
+$string['email_des'] = 'Insert your e-mail / Optional';
 $string['allowhtml'] = 'Disabled html';
 $string['allowhtml_desc'] = 'Disabled html in recommender block';
 
 // Events.
 $string['evententrycreated'] = 'Create_clicks_block';
 
+// Button form.
+$string['go'] = 'Go';
