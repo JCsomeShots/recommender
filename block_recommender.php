@@ -56,25 +56,100 @@ class block_recommender extends block_base {
      * To get the content for this block.
      * @return Mixed $this->content.
      */
+    // public function get_content() {
+    //     global $DB, $CFG, $USER, $PAGE, $COURSE;
+
+    //     $this->page->requires->jquery();
+    //     $this->page->requires->js('/blocks/recommender/amd/src/register.js');
+
+    //     $cards_per_row = 3;
+
+    //     $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
+    //     $heightlimit = 'height: 5px';
+    //     $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
+        
+    //     $instanceblock = $this->instance;
+
+    //     $content = '';
+    //     if ($instanceblock->defaultregion == 'content') {
+    //         $content .= '<div class="card-deck justify-content-center">';
+    //     }
+
+    //     foreach ($courses as $i => $course) {
+    //         $summary = $course->summary;
+    //         $summary = preg_replace('/<[^>]*>/', '', $summary);
+    //         if (mb_detect_encoding($summary) !== 'UTF-8') {
+    //             $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
+    //         }
+    //         $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
+
+    //         $card_class = $instanceblock->defaultregion == 'content' ? 'col-md-' . 12 / $cards_per_row : '';
+
+    //         $content .= '<div class="'.$card_class.'">';
+    //         $content .= '<div class="card mb-3 h-100">';
+
+    //         $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
+
+    //         $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
+    //         $content .= '</div>';
+            
+    //         $content .= '<div class="card-body">';
+    //         $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+    //         $card_style = $instanceblock->defaultregion == 'content' ? 'style="height:40px;"' : '';
+    //         $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
+    //         $content .= '</div>';
+
+    //         $content .= '<div class="card-footer">';
+    //         $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" onclick="registerClick('.$USER->id.','.$course->id.')">'. get_string('go', 'block_recommender').'</button>';
+    //         $content .= '</div>';
+
+    //         if ($instanceblock->defaultregion == 'content') {
+    //             $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
+    //             $content .= '</div>';
+    //         }
+
+    //         $content .= '</a>';
+    //         $content .= '</div>';
+    //         $content .= '</div>';
+    
+    //         if ($i == 3 && $instanceblock->defaultregion != 'content') {
+    //             break;
+    //         }
+    
+    //         if ($instanceblock->defaultregion == 'content' && ($i + 1) % $cards_per_row == 0) {
+    //             $content .= '</div><div class="card-deck justify-content-center mt-3">';
+    //         } else if ($i == $limit - 1) {
+    //             $content .= '</div>';
+    //         }
+
+    //     }
+    
+    //     if ($instanceblock->defaultregion == 'content') {
+    //         $content .= '</div>';
+    //     }
+    
+    //     $this->content = new stdClass();
+    //     $this->content->text = $content;
+    
+    //     return $this->content;
+    // }
+
     public function get_content() {
         global $DB, $CFG, $USER, $PAGE, $COURSE;
-
+    
         $this->page->requires->jquery();
         $this->page->requires->js('/blocks/recommender/amd/src/register.js');
-
-        $cards_per_row = 3;
-
+    
         $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
         $heightlimit = 'height: 5px';
         $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
-        
+    
         $instanceblock = $this->instance;
-
+    
         $content = '';
-        if ($instanceblock->defaultregion == 'content') {
-            $content .= '<div class="card-deck justify-content-center">';
-        }
-
+    
+        $content .= '<div class="card-columns">';
+    
         foreach ($courses as $i => $course) {
             $summary = $course->summary;
             $summary = preg_replace('/<[^>]*>/', '', $summary);
@@ -82,14 +157,10 @@ class block_recommender extends block_base {
                 $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
             }
             $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-
-            $card_class = $instanceblock->defaultregion == 'content' ? 'col-md-' . 12 / $cards_per_row : '';
-
-            $content .= '<div class="'.$card_class.'">';
-            $content .= '<div class="card mb-3 h-100">';
-
+    
+            $content .= '<div class="card">';
             $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
-
+    
             $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
             $content .= '</div>';
             
@@ -98,50 +169,20 @@ class block_recommender extends block_base {
             $card_style = $instanceblock->defaultregion == 'content' ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
-
+    
             $content .= '<div class="card-footer">';
-            $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" onclick="registerClick('.$USER->id.','.$course->id.')">'. get_string('go', 'block_recommender').'</button>';
+            $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" >'.get_string('go', 'block_recommender').'</button>';
             $content .= '</div>';
-
-            if ($instanceblock->defaultregion == 'content') {
-                $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
-                $content .= '</div>';
-            }
-
+    
             $content .= '</a>';
             $content .= '</div>';
-            $content .= '</div>';
-    
-            if ($i == 3 && $instanceblock->defaultregion != 'content') {
-                break;
-            }
-    
-            if ($instanceblock->defaultregion == 'content' && ($i + 1) % $cards_per_row == 0) {
-                $content .= '</div><div class="card-deck justify-content-center mt-3">';
-            } else if ($i == $limit - 1) {
-                $content .= '</div>';
-            }
-
         }
     
-        if ($instanceblock->defaultregion == 'content') {
-            $content .= '</div>';
-        }
+        $content .= '</div>';
     
-        $this->content = new stdClass();
-        $this->content->text = $content;
-    
-        return $this->content;
+        return $content;
     }
-
-
-/********* some notes  */
-// $event = \block_my_courses\event\course_clicked::create(array(
-//     'objectid' => $course->id,
-//     'context' => $PAGE->context,
-// ));
-// $event->add_record_snapshot('course', $course);
-// $event->trigger();
+    
 
 
     /**
