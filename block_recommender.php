@@ -32,6 +32,8 @@ require_once("{$CFG->libdir}/blocklib.php");
 require_once($CFG->dirroot."/blocks/recommender/classes/event/registerclick.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
 require_once(__DIR__.'/../../config.php');
+// require_once(__DIR__.'/classes/course.php');
+
 
 class block_recommender extends block_base {
 
@@ -55,7 +57,7 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $DB, $CFG, $USER;
+        global $DB, $CFG, $USER, $PAGE, $COURSE;
 
         $this->page->requires->jquery();
         $this->page->requires->js('/blocks/recommender/amd/src/register.js');
@@ -70,6 +72,7 @@ class block_recommender extends block_base {
 
         $content = '';
         $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
+        $heightlimit = $this->instance->defaultregion == 'content' ? 'height: 10px' : 'height: 5px';
         $courses = $DB->get_records_sql("SELECT * FROM {course} ORDER BY RAND() LIMIT $limit");
     
         $instanceblock = $this->instance;
@@ -77,13 +80,46 @@ class block_recommender extends block_base {
         if ($instanceblock->defaultregion == 'content') {
             $content .= '<div class="card-deck justify-content-center">';
         }
-    
+
         foreach ($courses as $i => $course) {
             $words = strip_tags(mb_convert_encoding($course->summary, 'UTF-8', 'ISO-8859-1'));
             $words = str_word_count($words, 1); // convert the description into an array.
             $summary = implode(' ', array_slice($words, 0, 6)); // Join the 6 first words into a str.
 
-            $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-3' : 'col-sm-12';
+            // $image_url = $PAGE->course->get_course_summary_image_url();
+            // $summary_image = $PAGE->course->get_course_summary_image();
+
+            // $courseobj = \core_course\course::get_course($course->id);
+            // $image_url = $courseobj->get_course_summary_image_url();
+            // $summary_image = $courseobj->get_course_summary_image();
+
+            // $courseobj = get_course($course->id);
+            // print_object($course->id);
+
+            // Get the URL of the first image file found, or the default course image if no image file is found
+            // if (!empty($image_files)) {
+            //     $url_course_cover_image = moodle_url::make_file_url('/file.php', '/' . $image_files[0], false);
+            // } else {
+            //     $url_course_cover_image = $CFG->wwwroot . '/theme/image.php?theme=' . $PAGE->theme->name . '&component=core&image=course_default';
+            // }
+            // print_object($url_course_cover_image);
+
+
+            // Get the current course ID
+            $course_id = $course->id;
+
+            // Path to the course overview files folder
+            $folder_path = $CFG->dataroot . '/filedir/1/course/' . $course_id . '/overviewfiles/';
+            
+            // Search for any image file in the folder
+            $image_files = glob($folder_path . '*.{jpg,jpeg,png,gif,svg}', GLOB_BRACE);
+            
+            // Get the URL of the first image file found
+            if (!empty($image_files)) {
+                $url_course_cover_image = moodle_url::make_file_url('/file.php', '/' . $image_files[0], false);
+            }
+
+            $card_class = $instanceblock->defaultregion == 'content' ? 'col-sm-4' : 'col-sm-12';
 
             $content .= '<div class="'.$card_class.'">';
             $content .= '<div class="card mb-3 h-100">';
@@ -92,6 +128,13 @@ class block_recommender extends block_base {
             $courseurl  = '#';
             $content .= '<a href="'.$courseurl.'" style="text-decoration: none;" onClick="registerClick('.$USER->id.', '.$course->id.');">';
 
+            $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
+
+// Build the HTML for the card image
+// $content .= '<div class="card-img dashboard-card-img" style="background-image: url(\'' . $url_course_cover_image . '\'); '.$heightlimit.'"></div>';
+
+            $content .= '</div>';
+            
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
             $content .= '<p class="card-text text-dark">'.$summary.'</p>';
@@ -105,10 +148,11 @@ class block_recommender extends block_base {
             }
     
             if ($instanceblock->defaultregion == 'content' && ($i + 1) % $cards_per_row == 0) {
-                $content .= '</div><div class="card-deck justify-content-center">';
+                $content .= '</div><div class="card-deck justify-content-center mt-3">';
             } else if ($i == $limit - 1) {
                 $content .= '</div>';
             }
+
         }
     
         if ($instanceblock->defaultregion == 'content') {
@@ -129,7 +173,6 @@ class block_recommender extends block_base {
 // ));
 // $event->add_record_snapshot('course', $course);
 // $event->trigger();
-
 
 
     /**
