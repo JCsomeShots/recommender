@@ -56,7 +56,7 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $DB, $CFG, $USER, $PAGE, $COURSE;
+        global $DB, $USER;
 
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
@@ -72,7 +72,16 @@ class block_recommender extends block_base {
 
         $clickform = new course_click();
         $param = new stdClass();
+        $check = false;
 
+        if ($fromform = $clickform->get_data()) {
+            if (!$check) {
+                require_sesskey();
+                $clickform->save($fromform->user_id, $fromform->course_id);
+                $clickform->redirect($fromform->course_id);
+            }
+            $check = true;
+        }
 
         foreach ($courses as $i => $course) {
             $summary = $course->summary;
@@ -84,27 +93,22 @@ class block_recommender extends block_base {
 
             $content .= '<div class="card mb-3 h-100">';
 
-            // $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
-
             $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
             $content .= '</div>';
             
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
-            $card_style = $instanceblock->defaultregion == 'content' ? 'style="height:40px;"' : '';
+            $card_style = $region ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
-
-            // $content .= '<div class="card-footer">';
-            // $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" onclick="registerClick('.$USER->id.','.$course->id.')">'. get_string('go', 'block_recommender').'</button>';
-            // $content .= '</div>';
 
             $content .= '<div class="card-footer">';
             $param->user_id = $USER->id;
             $param->course_id = $course->id;
             $clickform->set_data($param);
-            $clickbutton = $clickform->render();
-            $content .= $clickbutton;
+            $clickbuttons = $clickform->render();
+            $content .= $clickbuttons;
+
             $content .= '</div>';
 
             if ($region) {
@@ -112,20 +116,10 @@ class block_recommender extends block_base {
                 $content .= '</div>';
             }
 
-            // $content .= '</a>';
             $content .= '</div>';
-
         }
 
-        if ($fromform = $clickform->get_data()) {
-            require_sesskey();
-            $clickform->save($fromform->user_id, $fromform->course_id);
-            $clickform->set_data($param);
-            $clickbutton = $clickform->render();
-            // $clickform->reset($course->id);
-        }
-    
-        if ($instanceblock->defaultregion == 'content') {
+        if ($region) {
             $content .= '</div>';
         }
     
