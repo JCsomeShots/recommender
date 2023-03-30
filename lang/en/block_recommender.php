@@ -54,4 +54,4 @@ $string['allowhtml_desc'] = 'Disabled html in recommender block';
 $string['evententrycreated'] = 'Create_clicks_block';
 
 // Button form.
-$string['go'] = 'Go';
+$string['go'] = 'Register';

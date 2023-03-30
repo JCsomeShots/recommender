@@ -24,15 +24,14 @@
  */
 
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/organization.php");
-require_once($CFG->dirroot."/blocks/recommender/classes/event/organization.php");
-require_once($CFG->libdir."/accesslib.php");
 require_once("{$CFG->libdir}/accesslib.php");
-require_once($CFG->libdir."/blocklib.php");
 require_once("{$CFG->libdir}/blocklib.php");
-require_once($CFG->dirroot."/blocks/recommender/classes/event/registerclick.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
+require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
 require_once(__DIR__.'/../../config.php');
 // require_once(__DIR__.'/classes/course.php');
+// require_once($CFG->libdir . '/formslib.php');
+
 
 
 class block_recommender extends block_base {
@@ -56,100 +55,25 @@ class block_recommender extends block_base {
      * To get the content for this block.
      * @return Mixed $this->content.
      */
-    // public function get_content() {
-    //     global $DB, $CFG, $USER, $PAGE, $COURSE;
-
-    //     $this->page->requires->jquery();
-    //     $this->page->requires->js('/blocks/recommender/amd/src/register.js');
-
-    //     $cards_per_row = 3;
-
-    //     $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
-    //     $heightlimit = 'height: 5px';
-    //     $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
-        
-    //     $instanceblock = $this->instance;
-
-    //     $content = '';
-    //     if ($instanceblock->defaultregion == 'content') {
-    //         $content .= '<div class="card-deck justify-content-center">';
-    //     }
-
-    //     foreach ($courses as $i => $course) {
-    //         $summary = $course->summary;
-    //         $summary = preg_replace('/<[^>]*>/', '', $summary);
-    //         if (mb_detect_encoding($summary) !== 'UTF-8') {
-    //             $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
-    //         }
-    //         $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-
-    //         $card_class = $instanceblock->defaultregion == 'content' ? 'col-md-' . 12 / $cards_per_row : '';
-
-    //         $content .= '<div class="'.$card_class.'">';
-    //         $content .= '<div class="card mb-3 h-100">';
-
-    //         $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
-
-    //         $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
-    //         $content .= '</div>';
-            
-    //         $content .= '<div class="card-body">';
-    //         $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
-    //         $card_style = $instanceblock->defaultregion == 'content' ? 'style="height:40px;"' : '';
-    //         $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
-    //         $content .= '</div>';
-
-    //         $content .= '<div class="card-footer">';
-    //         $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" onclick="registerClick('.$USER->id.','.$course->id.')">'. get_string('go', 'block_recommender').'</button>';
-    //         $content .= '</div>';
-
-    //         if ($instanceblock->defaultregion == 'content') {
-    //             $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
-    //             $content .= '</div>';
-    //         }
-
-    //         $content .= '</a>';
-    //         $content .= '</div>';
-    //         $content .= '</div>';
-    
-    //         if ($i == 3 && $instanceblock->defaultregion != 'content') {
-    //             break;
-    //         }
-    
-    //         if ($instanceblock->defaultregion == 'content' && ($i + 1) % $cards_per_row == 0) {
-    //             $content .= '</div><div class="card-deck justify-content-center mt-3">';
-    //         } else if ($i == $limit - 1) {
-    //             $content .= '</div>';
-    //         }
-
-    //     }
-    
-    //     if ($instanceblock->defaultregion == 'content') {
-    //         $content .= '</div>';
-    //     }
-    
-    //     $this->content = new stdClass();
-    //     $this->content->text = $content;
-    
-    //     return $this->content;
-    // }
-
     public function get_content() {
         global $DB, $CFG, $USER, $PAGE, $COURSE;
-    
-        $this->page->requires->jquery();
-        $this->page->requires->js('/blocks/recommender/amd/src/register.js');
-    
-        $limit = $this->instance->defaultregion == 'content' ? 6 : 4;
+
+        $instanceblock = $this->instance;
+        $region = $instanceblock->defaultregion == 'content';
+        $limit = $region ? 6 : 3;
         $heightlimit = 'height: 5px';
         $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
-    
-        $instanceblock = $this->instance;
-    
+        
+
         $content = '';
-    
-        $content .= '<div class="card-columns">';
-    
+        if ($region) {
+            $content .= '<div class="card-columns">';
+        }
+
+        $clickform = new course_click();
+        $param = new stdClass();
+
+
         foreach ($courses as $i => $course) {
             $summary = $course->summary;
             $summary = preg_replace('/<[^>]*>/', '', $summary);
@@ -157,10 +81,11 @@ class block_recommender extends block_base {
                 $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
             }
             $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-    
-            $content .= '<div class="card">';
-            $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
-    
+
+            $content .= '<div class="card mb-3 h-100">';
+
+            // $content .= '<a href="' . new moodle_url('/course/view.php', array('id' => $course->id)) . '">';
+
             $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
             $content .= '</div>';
             
@@ -169,20 +94,47 @@ class block_recommender extends block_base {
             $card_style = $instanceblock->defaultregion == 'content' ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
-    
+
+            // $content .= '<div class="card-footer">';
+            // $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" onclick="registerClick('.$USER->id.','.$course->id.')">'. get_string('go', 'block_recommender').'</button>';
+            // $content .= '</div>';
+
             $content .= '<div class="card-footer">';
-            $content .= '<button type="button" class="rounded text-white" style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae);" >'.get_string('go', 'block_recommender').'</button>';
+            $param->user_id = $USER->id;
+            $param->course_id = $course->id;
+            $clickform->set_data($param);
+            $clickbutton = $clickform->render();
+            $content .= $clickbutton;
             $content .= '</div>';
+
+            if ($region) {
+                $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
+                $content .= '</div>';
+            }
+
+            // $content .= '</a>';
+            $content .= '</div>';
+
+        }
+
+        if ($fromform = $clickform->get_data()) {
+            require_sesskey();
+            $clickform->save($fromform->user_id, $fromform->course_id);
+            $clickform->set_data($param);
+            $clickbutton = $clickform->render();
+            // $clickform->reset($course->id);
+        }
     
-            $content .= '</a>';
+        if ($instanceblock->defaultregion == 'content') {
             $content .= '</div>';
         }
     
-        $content .= '</div>';
+        $this->content = new stdClass();
+        $this->content->text = $content;
     
-        return $content;
+        return $this->content;
     }
-    
+
 
 
     /**

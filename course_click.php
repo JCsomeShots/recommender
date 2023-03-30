@@ -56,7 +56,8 @@ class course_click extends moodleform {
      */
     public function reset($course_id) {
         global $CFG;
-        redirect(new moodle_url($CFG->wwwroot.'/course/view.php?id='.$course_id));
+        // redirect(new moodle_url($CFG->wwwroot.'/course/view.php?id='.$course_id));
+        redirect(new moodle_url( new moodle_url('/course/view.php', array('id' => $course_id)) ));
     }
 
     /**
@@ -64,34 +65,38 @@ class course_click extends moodleform {
      * @return Void .
      */
     public function save($iduser, $idcourse) {
-        global $DB;
-        $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
-        $array_click = [];
-        array_push($array_click, $idcourse);
-        $array_str = json_encode($array_click); // Convierte el valor a un array y luego a un string en formato JSON
+        print_object($idcourse);
+        print_object($iduser);
+        var_dump($idcourse);
+        var_dump($iduser);
+        // global $DB;
+        // $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
+        // $array_click = [];
+        // array_push($array_click, $idcourse);
+        // $array_str = json_encode($array_click); // Convierte el valor a un array y luego a un string en formato JSON
 
-        if (!$precheck) {
-            $record = new stdClass();
-            $record->userid = $iduser;
-            $record->courses = $array_str;
-            $record->timemodified = time();
-            $DB->insert_record('block_recommender_clicks', $record);
-        } else {
-            $clicks = $DB->get_record_sql("SELECT * FROM {block_recommender_clicks} WHERE userid = ?;", array($iduser));
-            $id = $clicks->id;
-            if (!is_null($clicks->courses) && is_string($clicks->courses)) {
-                $course_array = json_decode($clicks->courses);
-            } else {
-                $course_array = array();
-            }
-            array_push($course_array, $idcourse);
-            $array_str = json_encode($course_array);
-            $record = new stdClass();
-            $record->id = $id;
-            $record->courses = $array_str;
-            $record->timemodified = time();
-            $DB->update_record('block_recommender_clicks', $record);
-        }
+        // if (!$precheck) {
+        //     $record = new stdClass();
+        //     $record->userid = $iduser;
+        //     $record->courses = $array_str;
+        //     $record->timemodified = time();
+        //     $DB->insert_record('block_recommender_clicks', $record);
+        // } else {
+        //     $clicks = $DB->get_record_sql("SELECT * FROM {block_recommender_clicks} WHERE userid = ?;", array($iduser));
+        //     $id = $clicks->id;
+        //     if (!is_null($clicks->courses) && is_string($clicks->courses)) {
+        //         $course_array = json_decode($clicks->courses);
+        //     } else {
+        //         $course_array = array();
+        //     }
+        //     array_push($course_array, $idcourse);
+        //     $array_str = json_encode($course_array);
+        //     $record = new stdClass();
+        //     $record->id = $id;
+        //     $record->courses = $array_str;
+        //     $record->timemodified = time();
+        //     $DB->update_record('block_recommender_clicks', $record);
+        // }
     }
 
 }
