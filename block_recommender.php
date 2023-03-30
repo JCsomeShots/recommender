@@ -192,18 +192,15 @@ class block_recommender extends block_base {
      * To Save configuration from settings.
      */
     public function instance_config_save($data, $nolongerused = false) {
-        global $CFG;
+        // global $CFG;
         
         // if (!empty($CFG->block_recomender_allowhtml)) {
         //     $data->text = strip_tags($data->text);
         // } 
         // Default implementation defined in the main class.
         // return parent::instance_config_save($data,$nolongerused);
-        if ( $this->instance->defaultregion != 'content') {
-        } else {
-            $instanceconfig = $this->instance_config();
-            $instanceconfig->defaultweight = 0;
-        }
+        $instanceconfig = $this->instance_config();
+        $instanceconfig->defaultweight = 0;
     }
 
     /**
