@@ -26,7 +26,7 @@
 
 require_once(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/formslib.php');
-
+require_once("{$CFG->dirroot}/blocks/recommender/lib.php");
 /**
  * To add hidden fields.
  */
@@ -55,8 +55,6 @@ class course_click extends moodleform {
      * @return Void .
      */
     public function redirect($course_id) {
-        global $CFG;
-        // redirect(new moodle_url($CFG->wwwroot.'/course/view.php?id='.$course_id));
         redirect( new moodle_url('/course/view.php', array('id' => $course_id)) );
     }
 
@@ -64,32 +62,37 @@ class course_click extends moodleform {
      * Save on db
      * @return Void .
      */
-    public function save($iduser, $idcourse) {
+    public function save_clicks($iduser, $idcourse) {
 
         global $DB;
-        $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
+        $precheck  = precheck($iduser, $idcourse);
+        $enrol = enrol($iduser, $idcourse);
+
         $record = new stdClass();
         $record->userid = $iduser;
-        $record->courses = '';
-        $record->timemodified = time();
-        
-        if (!$precheck) {
-            $record->courses = $idcourse;
-            $DB->insert_record('block_recommender_clicks', $record);
-        } else {
-            $clicks = $DB->get_record('block_recommender_clicks', array('userid' => $iduser), '*', IGNORE_MISSING);
-            if (!empty($clicks->courses)) {
-                $course_array = explode(',', $clicks->courses);
-            } else {
-                $course_array = array();
-            }
-            if (!in_array($idcourse, $course_array)) {
-                $course_array[] = $idcourse;
-            }
-            $record->id = $clicks->id;
-            $record->courses = implode(',', $course_array);
-            $DB->update_record('block_recommender_clicks', $record);
+        $record->courseid = $idcourse;
+        $record->timecreated = time();
+
+        switch (true) {
+            case ($precheck && !empty($enrol)):
+                $record->enrol = 1;
+                $DB->insert_record('block_recommender_clicks', $record);
+                break;
+                
+            case ($precheck && empty($enrol)):
+                $existing_record = $DB->get_record('block_recommender_clicks', array('userid' => $iduser, 'courseid' => $idcourse));
+                $record->id = $existing_record->id;
+                $record->timemodified = time();
+                $record->clickscount = $existing_record->clickscount + 1;
+                $DB->update_record('block_recommender_clicks', $record);
+                break;
+                
+            default:
+                $DB->insert_record('block_recommender_clicks', $record);
+                break;
         }
+
     }
 
 }
+

@@ -26,16 +26,28 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-
-function printquery() {
+/**
+ * Retrieve and print information about user enrollments in courses
+ */
+function getquery() {
     global $DB;
 
-    $sql = "SELECT ue.userid, ue.enrolid, c.fullname, c.summary
+    // Build SQL query to retrieve user enrollments, course information, and enrollment date
+    $sql = "SELECT ue.userid, ue.enrolid, ue.timecreated, c.fullname, c.summary
             FROM {user_enrolments} ue
             JOIN {enrol} e ON e.id = ue.enrolid
             JOIN {course} c ON c.id = e.courseid";
+
+    // Execute SQL query and retrieve results as an array of objects
     $result = $DB->get_records_sql($sql);
+    return $result;
+
+}
+
+function printquery() {
+    $result = getquery();
+    // Iterate over each result and print the user ID, course name, enrollment ID, enrollment date, and summary
     foreach ($result as $row) {
-        echo "the user ID " . $row->userid . " is enrol in" . $row->fullname . " (enrollment ID : " . $row->enrolid . "), with this description: " . $row->summary . "<br>";
+        echo "the user ID " . $row->userid . " is enrolled in " . $row->fullname . " (enrollment ID: " . $row->enrolid . ") on " . date('Y-m-d', $row->timecreated) . ", with this description: " . $row->summary . "<br>";
     }
 }
