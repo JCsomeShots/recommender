@@ -186,9 +186,11 @@ class block_recommender extends block_base {
      * To Save configuration from settings.
      */
     public function instance_config_save($data, $nolongerused = false) {
+
         global $CFG;
             $instanceconfig = $this->instance_config();
             $instanceconfig->defaultweight = -3;
+
     }
 
     /**
