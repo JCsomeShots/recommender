@@ -23,3 +23,20 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+function precheck( $iduser , $idcourse) {
+    global $DB;
+    return $DB->record_exists('block_recommender_clicks', array('userid' => $iduser, 'courseid' => $idcourse));
+}
+
+function enrol( $iduser , $idcourse) {
+    global $DB;
+
+    $sql =  $sql = "SELECT ue.userid, ue.enrolid, ue.timecreated, c.fullname, c.summary
+    FROM {user_enrolments} ue
+    JOIN {enrol} e ON e.id = ue.enrolid
+    JOIN {course} c ON c.id = e.courseid
+    WHERE userid = ? AND c.id = ?";
+    $params = array( $iduser , $idcourse);
+    return $DB->get_record_sql($sql, $params);
+}
+

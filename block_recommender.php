@@ -29,9 +29,6 @@ require_once("{$CFG->libdir}/blocklib.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
 require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
 require_once(__DIR__.'/../../config.php');
-// require_once(__DIR__.'/classes/course.php');
-// require_once($CFG->libdir . '/formslib.php');
-
 
 
 class block_recommender extends block_base {
@@ -63,7 +60,6 @@ class block_recommender extends block_base {
         $limit = $region ? 6 : 3;
         $heightlimit = 'height: 5px';
         $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
-        
 
         $content = '';
         if ($region) {
@@ -73,15 +69,9 @@ class block_recommender extends block_base {
         $clickform = new course_click();
         $param = new stdClass();
         $check = false;
+        $click_saved = false;
 
-        if ($fromform = $clickform->get_data()) {
-            if (!$check) {
-                require_sesskey();
-                $clickform->save($fromform->user_id, $fromform->course_id);
-                $clickform->redirect($fromform->course_id);
-            }
-            $check = true;
-        }
+        $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
 
         foreach ($courses as $i => $course) {
             $summary = $course->summary;
@@ -93,9 +83,8 @@ class block_recommender extends block_base {
 
             $content .= '<div class="card mb-3 h-100">';
 
-            $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
-            $content .= '</div>';
-            
+            $content .= $card_img;
+
             $content .= '<div class="card-body">';
             $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
             $card_style = $region ? 'style="height:40px;"' : '';
@@ -106,26 +95,30 @@ class block_recommender extends block_base {
             $param->user_id = $USER->id;
             $param->course_id = $course->id;
             $clickform->set_data($param);
-            $clickbuttons = $clickform->render();
-            $content .= $clickbuttons;
+            $content .= $clickform->render();
 
             $content .= '</div>';
 
-            if ($region) {
-                $content .= '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'">';
-                $content .= '</div>';
+            $content .= $region ? $card_img : '';
+
+            $content .= '</div>';
+
+            if (!$click_saved && $fromform = $clickform->get_data()) {
+                if (!$check) {
+                    require_sesskey();
+                    $clickform->save_clicks($fromform->user_id, $fromform->course_id);
+                    $clickform->redirect($fromform->course_id);
+                    $check = true;
+                    $click_saved = true;
+                }
             }
-
-            $content .= '</div>';
         }
 
-        if ($region) {
-            $content .= '</div>';
-        }
-    
+        $content .= $region ? '</div>' : '';
+
         $this->content = new stdClass();
         $this->content->text = $content;
-    
+
         return $this->content;
     }
 
@@ -142,6 +135,7 @@ class block_recommender extends block_base {
         }
         return array_keys($this->regions);
     }
+
     /**
      * Get the region name of the region blocks are added to by default
      *
@@ -192,15 +186,11 @@ class block_recommender extends block_base {
      * To Save configuration from settings.
      */
     public function instance_config_save($data, $nolongerused = false) {
-        // global $CFG;
-        
-        // if (!empty($CFG->block_recomender_allowhtml)) {
-        //     $data->text = strip_tags($data->text);
-        // } 
-        // Default implementation defined in the main class.
-        // return parent::instance_config_save($data,$nolongerused);
-        $instanceconfig = $this->instance_config();
-        $instanceconfig->defaultweight = 0;
+
+        global $CFG;
+            $instanceconfig = $this->instance_config();
+            $instanceconfig->defaultweight = -3;
+
     }
 
     /**
