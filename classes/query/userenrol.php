@@ -33,7 +33,7 @@ function getquery() {
     global $DB;
 
     // Build SQL query to retrieve user enrollments, course information, and enrollment date
-    $sql = "SELECT ue.userid, ue.enrolid, ue.timecreated, c.fullname, c.summary
+    $sql = "SELECT ue.userid as userid, ue.enrolid, ue.timecreated, c.fullname, c.id as courseid, c.summary
             FROM {user_enrolments} ue
             JOIN {enrol} e ON e.id = ue.enrolid
             JOIN {course} c ON c.id = e.courseid";
@@ -44,10 +44,59 @@ function getquery() {
 
 }
 
+/**
+ * Like a reference. To provide information to the recommender.
+ */
 function printquery() {
     $result = getquery();
     // Iterate over each result and print the user ID, course name, enrollment ID, enrollment date, and summary
     foreach ($result as $row) {
         echo "the user ID " . $row->userid . " is enrolled in " . $row->fullname . " (enrollment ID: " . $row->enrolid . ") on " . date('Y-m-d', $row->timecreated) . ", with this description: " . $row->summary . "<br>";
+    }
+}
+
+
+/**
+ * To give this courses that the user is not enrol.
+ * @return Array $results 
+ */
+function notenrol(){
+    global $DB, $USER;
+
+    $current_user_id = $USER->id;
+
+    // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
+    $sql = "SELECT c.id as courseid, c.fullname, c.summary
+            FROM {course} c
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM {user_enrolments} ue
+                JOIN {enrol} e ON e.id = ue.enrolid
+                WHERE e.courseid = c.id
+                AND ue.userid = :current_user_id
+            )";
+    $params = ['current_user_id' => $current_user_id];
+
+    // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
+    $results = $DB->get_records_sql($sql, $params);
+
+    return $results;
+}
+
+function updaterecommender($iduser, $idcourse){
+    global $DB;
+    $precheck  = precheck($iduser, $idcourse);
+    $enrol = enrol($iduser, $idcourse);
+    $timeenrol = getquery();
+
+    if ($precheck && !empty($enrol)  ) {
+
+
+        $record = new stdClass();
+        $record->userid = $iduser;
+        $record->courseid = $idcourse;
+        $record->timecreated = time();
+        $record->enrol = 1;
+        $DB->insert_record('block_recommender_clicks', $record);
     }
 }

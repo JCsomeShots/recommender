@@ -74,11 +74,6 @@ class course_click extends moodleform {
         $record->timecreated = time();
 
         switch (true) {
-            case ($precheck && !empty($enrol)):
-                $record->enrol = 1;
-                $DB->insert_record('block_recommender_clicks', $record);
-                break;
-                
             case ($precheck && empty($enrol)):
                 $existing_record = $DB->get_record('block_recommender_clicks', array('userid' => $iduser, 'courseid' => $idcourse));
                 $record->id = $existing_record->id;
@@ -93,6 +88,8 @@ class course_click extends moodleform {
         }
 
     }
+
+
 
 }
 

@@ -34,10 +34,11 @@ require_login();
 
     global $DB;
 
-    // $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
+    $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
 
-    // if ($precheck == false) {
-    // }
+    if ($precheck != false) {
+        
+    }
     
     // $record = new stdClass();
     // $record->userid = $iduser;

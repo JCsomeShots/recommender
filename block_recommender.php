@@ -26,7 +26,8 @@
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/organization.php");
 require_once("{$CFG->libdir}/accesslib.php");
 require_once("{$CFG->libdir}/blocklib.php");
-require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
+// require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/query/userenrol.php");
 require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
 require_once(__DIR__.'/../../config.php');
 
@@ -53,13 +54,18 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $DB, $USER;
+        global $USER;
 
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
         $limit = $region ? 6 : 3;
         $heightlimit = 'height: 5px';
-        $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
+        // $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
+
+        // $notenrol = notenrol();
+        // print_object($notenrol);
+
+        $courses = notenrol();
 
         $content = '';
         if ($region) {
@@ -93,7 +99,7 @@ class block_recommender extends block_base {
 
             $content .= '<div class="card-footer">';
             $param->user_id = $USER->id;
-            $param->course_id = $course->id;
+            $param->course_id = $course->courseid;
             $clickform->set_data($param);
             $content .= $clickform->render();
 
