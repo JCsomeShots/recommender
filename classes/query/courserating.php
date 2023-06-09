@@ -28,9 +28,8 @@ defined('MOODLE_INTERNAL') || die;
 
 /**
  * To get records from course rating if this exists. 
- * @return Array $result with the average course from tool rating 
+ * @return Mixed $result with the average course from tool rating 
  */
-
 function courserating() {
 
     global $DB;
@@ -39,17 +38,12 @@ function courserating() {
             GROUP BY cr.courseid";
     
     if ($DB->get_manager()->table_exists('tool_courserating_rating')) {
-        global $DB;
     
         if ($DB->count_records('userid') != 0) {
             $results = $DB->get_records_sql($sql);
         } 
     } 
     
-    return $results;
-    // foreach ($results as $result) {
-    //     $course_id = $result->courseid;
-    //     $avg_rating = $result->avg_rating;
-    //     // Procesar cada resultado
-    // }
+    return $results = $results ?: 0;
 }
+

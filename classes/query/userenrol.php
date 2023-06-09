@@ -23,6 +23,7 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once("$CFG->libdir/dml/pgsql_native_moodle_database.php");
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -100,3 +101,143 @@ function updaterecommender($iduser, $idcourse){
         $DB->insert_record('block_recommender_clicks', $record);
     }
 }
+
+/**
+ * Returns the course with the most enrolments.
+ *
+ * This function iterates through all the courses in Moodle and counts the number of users enrolled in each course. It then returns the course with the highest enrolment count.
+ *
+ * @return object The course object with the most enrolments.
+ */
+function get_course_with_most_enrolments() {
+    global $DB;
+
+    // Get all courses in Moodle.
+    $courses = $DB->get_records('course');
+
+    // Initialize variables to keep track of the course with the most enrolments.
+    $max_enrolments = 0;
+    $max_enrolments_course = null;
+
+    // Iterate through all courses and count the number of users enrolled in each course.
+    foreach ($courses as $course) {
+        $enrolments_count = $DB->count_records('user_enrolments', array('enrolid' => $course->id));
+        if ($enrolments_count > $max_enrolments) {
+            $max_enrolments = $enrolments_count;
+            $max_enrolments_course = $course;
+        }
+    }
+
+    // Return the course with the most enrolments.
+    return $max_enrolments_course;
+}
+
+/**
+ * Devuelve una matriz con los 3 cursos con más inscripciones.
+ *
+ * Esta función recorre todos los cursos en Moodle y cuenta el número de inscripciones para cada curso. Luego devuelve una matriz con los 3 cursos con el recuento de inscripción más alto.
+ *
+ * @return array La matriz con los 3 cursos con más inscripciones.
+ */
+function get_top_courses_by_enrolment() {
+    global $DB;
+
+    // Obtener todos los cursos en Moodle.
+    $courses = $DB->get_records('course');
+
+    // Inicializar una matriz para realizar un seguimiento de los 3 cursos con más inscripciones.
+    $top_courses = array();
+
+    // Iterar a través de todos los cursos y contar el número de inscripciones para cada curso.
+    foreach ($courses as $course) {
+        $enrolments_count = $DB->count_records('enrol', array('courseid' => $course->id));
+        $top_courses[$course->id] = $enrolments_count;
+    }
+
+    // Ordenar la matriz en orden descendente según el recuento de inscripciones.
+    arsort($top_courses);
+
+    // Obtener los 3 cursos con más inscripciones.
+    $top_courses = array_slice($top_courses, 0, 3, true);
+
+    // Obtener los objetos de curso correspondientes a los 3 cursos con más inscripciones.
+    $top_courses_objects = array();
+    foreach ($top_courses as $courseid => $enrolments_count) {
+        $course_object = $DB->get_record('course', array('id' => $courseid));
+        $top_courses_objects[] = $course_object;
+    }
+
+    // Devolver la matriz con los 3 cursos con más inscripciones.
+    return $top_courses_objects;
+}
+
+
+/**
+ * Returns the course with the most users who have completed the course.
+ *
+ * This function loops through all the courses in Moodle and counts the number of users who have completed each course. It then returns the course with the highest completion count.
+ *
+ * @return object The course object with the most users who have completed the course.
+ */
+function get_course_with_most_completed_users() {
+    global $DB;
+
+    // Get all courses in Moodle.
+    $courses = $DB->get_records('course');
+
+    // Initialize variables to track the course with the most users who have completed the course.
+    $max_completed_users = 0;
+    $max_completed_users_course = null;
+
+    // Iterate through all courses and count the number of users who have completed each course.
+    foreach ($courses as $course) {
+        $completed_users_count = $DB->count_records_sql("SELECT COUNT(DISTINCT userid) FROM {course_completions} WHERE course = ?", array($course->id));
+        if ($completed_users_count > $max_completed_users) {
+            $max_completed_users = $completed_users_count;
+            $max_completed_users_course = $course;
+        }
+    }
+
+    // Return the course with the most users who have completed the course.
+    return $max_completed_users_course;
+}
+
+/**
+ * Devuelve una matriz con los 3 cursos con más usuarios que han completado el curso.
+ *
+ * Esta función recorre todos los cursos en Moodle y cuenta el número de usuarios que han completado el curso. Luego devuelve una matriz con los 3 cursos con el recuento de finalización más alto.
+ *
+ * @return array La matriz con los 3 cursos con más usuarios que han completado el curso.
+ */
+function get_top_courses_by_completion() {
+    global $DB;
+
+    // Obtener todos los cursos en Moodle.
+    $courses = $DB->get_records('course');
+
+    // Inicializar una matriz para realizar un seguimiento de los 3 cursos con más usuarios que han completado el curso.
+    $top_courses = array();
+
+    // Iterar a través de todos los cursos y contar el número de usuarios que han completado el curso.
+    foreach ($courses as $course) {
+        $completion_count = $DB->count_records_sql("SELECT COUNT(DISTINCT u.id) FROM {user} u JOIN {user_enrolments} ue ON ue.userid = u.id JOIN {course_completions} cc ON cc.userid = u.id AND cc.course = ue.courseid WHERE ue.courseid = ?", array($course->id));
+        $top_courses[$course->id] = $completion_count;
+    }
+
+    // Ordenar la matriz en orden descendente según el recuento de finalización.
+    arsort($top_courses);
+
+    // Obtener los 3 cursos con más usuarios que han completado el curso.
+    $top_courses = array_slice($top_courses, 0, 3, true);
+
+    // Obtener los objetos de curso correspondientes a los 3 cursos con más usuarios que han completado el curso.
+    $top_courses_objects = array();
+    foreach ($top_courses as $courseid => $completion_count) {
+        $course_object = $DB->get_record('course', array('id' => $courseid));
+        $top_courses_objects[] = $course_object;
+    }
+
+    // Devolver la matriz con los 3 cursos con más usuarios que han completado el curso.
+    return $top_courses_objects;
+}
+

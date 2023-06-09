@@ -54,8 +54,14 @@ class course_click extends moodleform {
      * to redirect to forum_review
      * @return Void .
      */
-    public function redirect($course_id) {
-        redirect( new moodle_url('/course/view.php', array('id' => $course_id)) );
+    public function redirect($courseid) {
+        global $PAGE;
+
+        var_dump($courseid);
+        if ($PAGE->course->id != $courseid && empty($courseid)) {
+            redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
+        }    
+        redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
     }
 
     /**

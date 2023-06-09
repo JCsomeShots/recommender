@@ -54,7 +54,7 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $USER;
+        global $USER, $COURSE;
 
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
@@ -119,11 +119,22 @@ class block_recommender extends block_base {
                 }
             }
         }
+        $bestcourse = best_ratingcourse();
 
         $content .= $region ? '</div>' : '';
 
         $this->content = new stdClass();
         $this->content->text = $content;
+
+if (is_siteadmin()) {
+
+    $url = new moodle_url(
+        '/blocks/recommender/view.php',
+        array('blockid' => $this->instance->id, 'courseid' => $COURSE->id)
+    );
+
+    $this->content->footer = html_writer::link($url, get_string('addpage', 'block_recommender'));
+}
 
         return $this->content;
     }
@@ -194,8 +205,8 @@ class block_recommender extends block_base {
     public function instance_config_save($data, $nolongerused = false) {
 
         global $CFG;
-            $instanceconfig = $this->instance_config();
-            $instanceconfig->defaultweight = -3;
+            // $instanceconfig = $this->instance_config();
+            // $instanceconfig->defaultweight = -3;
 
     }
 

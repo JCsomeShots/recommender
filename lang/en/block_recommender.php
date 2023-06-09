@@ -55,3 +55,14 @@ $string['evententrycreated'] = 'Create_clicks_block';
 
 // Button form.
 $string['go'] = 'Register';
+
+// View & form.
+$string['textfields'] = 'Specific course (max 3)';
+$string['addpage'] = 'Choose specific courses to recommend';
+$string['edithtml'] = 'If you would like to recommend a specific course';
+$string['recommendersettings'] = 'Setting new page';
+$string['editpage'] = 'Edit params';
+$string['courseselect'] = 'Select a course';
+$string['courseone'] = 'Course 1';
+$string['coursetwo'] = 'Course 2';
+$string['coursethree'] = 'Course 3';

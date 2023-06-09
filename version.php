@@ -31,3 +31,5 @@ $plugin->version = 2022140903;
 $plugin->requires = 2021051700;
 $plugin->maturity = MATURITY_ALPHA;
 
+$defaults = array('defaultweight' => 100, 'visible' => 1);
+
