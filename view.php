@@ -36,9 +36,9 @@ $id = optional_param('id', 0, PARAM_INT);
 
 
 
-if(!$course = $DB->get_record('course', array('id' => $courseid))) {
-    print_error('invalidcourse', 'block_recommender', $courseid);
-}
+// if(!$course = $DB->get_record('course', array('id' => $courseid))) {
+//     print_error('invalidcourse', 'block_recommender', $courseid);
+// }
 require_login($course);
 
 $PAGE->set_url('/blocks/recommender/view.php', array('id' => $courseid));
@@ -64,11 +64,27 @@ $toform['courseid'] = $courseid;
 $selectcourse->set_data($toform);
 
 
+$action = optional_param('action', '', PARAM_TEXT);
+
+if ($action == 'del') {
+    $id = required_param('id', PARAM_TEXT);
+
+    $DB->delete_records('block_recommender_suggested', array('id' => $id));
+}
+
 
 if ($selectcourse->is_cancelled()) {
-    $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-    redirect($courseurl);
+    // $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    // redirect($courseurl);
+
+    $dashboard_url = new moodle_url('/my/');
+    redirect($dashboard_url);
 } else if ($selectcourse->get_data() ) {
+
+    // The real action to delete a message.
+    $action = optional_param('action', '', PARAM_TEXT);
+
+   
     
     echo $OUTPUT->header();
 
@@ -119,15 +135,49 @@ if ($selectcourse->is_cancelled()) {
         echo html_writer::start_tag('div', array('class' => 'card'));
         echo html_writer::start_tag('div', array('class' => 'card-body'));
         echo html_writer::tag('p', format_text($c->fullname, FORMAT_PLAIN), array('class' => 'card-text'));
-        echo html_writer::tag('p', format_text($c->id, FORMAT_PLAIN), array('class' => 'card-text'));
+        echo html_writer::tag('p', format_text($c->id, FORMAT_INT), array('class' => 'card-text'));
         echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
+       
         echo html_writer::link(
             new moodle_url(
-                '/blocks/recommender/view.php', array('blockid' => $blockid, 'courseid' => $courseid),
-                array('action' => 'del', 'id' => $c->id , 'sesskey' => sesskey())
+                '/blocks/recommender/view.php',
+                array('action' => 'del', 'blockid' => $blockid, 'courseid' => $courseid, 'id' => $c->id)
             ),
-            $OUTPUT->pix_icon('t/delete', ''), array('role' => 'button', 'aria-label' => get_string('delete'), 'title' => get_string('delete'))
+            $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
         );
+        // if (optional_param('action', '', PARAM_RAW) === 'del' && confirm_sesskey()) {
+        //     // Obtenemos el ID del registro a eliminar
+        //     $id = required_param('id', PARAM_INT);
+        
+        //     // Eliminamos el registro de la tabla block_recommender_suggested
+        //     $table = 'block_recommender_suggested';
+        //     $conditions = array('id' => $id);
+        //     $DB->delete_records($table, $conditions);
+
+        //     // if (delete_records($table, $conditions)) {
+        //     //     // Si la eliminación fue exitosa, mostramos un mensaje de confirmación
+        //     //     echo $OUTPUT->notification('Registro eliminado correctamente');
+        //     //     // Aquí puedes redirigir al usuario a la página que desees
+        //     // } else {
+        //     //     // Si la eliminación falló, mostramos un mensaje de error
+        //     //     echo $OUTPUT->notification('Error al intentar eliminar el registro', 'notifyproblem');
+        //     // }
+        // }
+        
+        // // Agregamos el enlace para borrar el registro
+        // echo html_writer::link(
+        //     new moodle_url(
+        //         '/blocks/recommender/view.php',
+        //         array('blockid' => $blockid, 'courseid' => $courseid, 'id' => $c->id)
+        //     ),
+        //     $OUTPUT->pix_icon('t/delete', ''),
+        //     array(
+        //         'role' => 'button',
+        //         'aria-label' => get_string('delete'),
+        //         'title' => get_string('delete'),
+        //         'onclick' =>"return confirm('¿Está seguro de que desea eliminar este registro?');"
+        //     )
+        // );
         echo html_writer::end_tag('p');
 
         echo html_writer::end_tag('div');
@@ -142,8 +192,69 @@ if ($selectcourse->is_cancelled()) {
     
 } else {
     $site = get_site();
+
+    $sql = "SELECT br.id, c.fullname FROM {block_recommender_suggested} br JOIN {course} c WHERE c.id = br.courseid";
+    $toview = $DB->get_records_sql($sql);
+
     echo $OUTPUT->header();
     $selectcourse->display();
+    echo $OUTPUT->box_start('card-columns');
+
+    foreach ($toview as $c) {
+        echo html_writer::start_tag('div', array('class' => 'card'));
+        echo html_writer::start_tag('div', array('class' => 'card-body'));
+        echo html_writer::tag('p', format_text($c->fullname, FORMAT_PLAIN), array('class' => 'card-text'));
+        echo html_writer::tag('p', format_text($c->id, FORMAT_PLAIN), array('class' => 'card-text'));
+        echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
+       
+        echo html_writer::link(
+            new moodle_url(
+                '/blocks/recommender/view.php',
+                array('action' => 'del', 'blockid' => $blockid, 'courseid' => $courseid, 'id' => $c->id)
+            ),
+            $OUTPUT->pix_icon('t/delete', '') . get_string('delete')
+        );
+
+
+
+        // if (optional_param('action', '', PARAM_RAW) === 'del' && confirm_sesskey()) {
+        //     // Obtenemos el ID del registro a eliminar
+        //     $id = required_param('id', PARAM_INT);
+        
+        //     // Eliminamos el registro de la tabla block_recommender_suggested
+        //     $table = 'block_recommender_suggested';
+        //     $conditions = array('id' => $id);
+        //     $DB->delete_records($table, $conditions);
+        //     // if (delete_records($table, $conditions)) {
+        //     //     // Si la eliminación fue exitosa, mostramos un mensaje de confirmación
+        //     //     echo $OUTPUT->notification('Registro eliminado correctamente');
+        //     //     // Aquí puedes redirigir al usuario a la página que desees
+        //     // } else {
+        //     //     // Si la eliminación falló, mostramos un mensaje de error
+        //     //     echo $OUTPUT->notification('Error al intentar eliminar el registro', 'notifyproblem');
+        //     // }
+        // }
+        
+        // // Agregamos el enlace para borrar el registro
+        // echo html_writer::link(
+        //     new moodle_url(
+        //         '/blocks/recommender/view.php',
+        //         array('blockid' => $blockid, 'courseid' => $courseid, 'id' => $c->id)
+        //     ),
+        //     $OUTPUT->pix_icon('t/delete', ''),
+        //     array(
+        //         'role' => 'button',
+        //         'aria-label' => get_string('delete'),
+        //         'title' => get_string('delete'),
+        //         'onclick' =>"return confirm('¿Está seguro de que desea eliminar este registro?');"
+        //     )
+        // );
+        echo html_writer::end_tag('p');
+
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
+    }
+    echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
 
 }
