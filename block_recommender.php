@@ -360,13 +360,16 @@ if (is_siteadmin()) {
 function contarTresPalabras($texto) {
     // Separar el texto en palabras usando como delimitador el espacio (' ')
     $palabras = explode(' ', $texto);
-  
-    // Contar las primeras tres palabras
-    $n_palabras = min(count($palabras), 3);
-  
-    // Armar un nuevo arreglo con las primeras tres palabras
-    $primeras_palabras = array_slice($palabras, 0, $n_palabras);
-  
-    // Devolver el número de palabras
-    return count($palabras);
-  }
+    
+        // Contar las primeras tres palabras
+        $n_palabras = min(count($palabras), 3);
+    
+        // Armar un nuevo arreglo con las primeras tres palabras
+        $primeras_palabras = array_slice($palabras, 0, $n_palabras);
+    
+        // Unir las palabras en un string
+    $texto_cortado = implode(' ', $primeras_palabras);
+
+    // Devolver el texto cortado
+    return $texto_cortado;
+}
