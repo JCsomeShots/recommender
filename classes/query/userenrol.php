@@ -241,3 +241,32 @@ function get_top_courses_by_completion() {
     return $top_courses_objects;
 }
 
+
+function suggested_table() {
+
+    global $DB, $USER;
+
+    $current_user_id = $USER->id;
+
+    // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
+    $sql = "SELECT c.id as courseid, c.fullname, c.summary
+            FROM {course} c
+            JOIN {block_recommender_suggested} br ON br.courseid = c.id 
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM {user_enrolments} ue
+                JOIN {enrol} e ON e.id = ue.enrolid
+                WHERE e.courseid = c.id
+                AND ue.userid = :current_user_id
+            )
+            ORDER BY RAND()
+            LIMIT 3";
+    $params = ['current_user_id' => $current_user_id];
+
+    // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
+    $results = $DB->get_records_sql($sql, $params);
+
+    return $results;
+
+}
+

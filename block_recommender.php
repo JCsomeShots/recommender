@@ -60,14 +60,21 @@ class block_recommender extends block_base {
         $region = $instanceblock->defaultregion == 'content';
         $limit = $region ? 6 : 3;
         $heightlimit = 'height: 5px';
-        // $courses = $DB->get_records('course', null, 'RAND()', '*', 0, $limit);
-
-        // $notenrol = notenrol();
-        // print_object($notenrol);
 
         $courses = notenrol();
+        $coursessuggested = suggested_table();
 
         $content = '';
+
+        $content .= '<div><h4>Suggested courses</h4></div>';
+        foreach($coursessuggested as $i => $course) {
+            $content .= $course->fullname;
+            $content .= $course->summary;
+
+        }
+
+
+        $content .= '<div><h4>Most popular</h4></div>';
         if ($region) {
             $content .= '<div class="card-columns">';
         }
@@ -79,13 +86,17 @@ class block_recommender extends block_base {
 
         $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
 
+
         foreach ($courses as $i => $course) {
-            $summary = $course->summary;
-            $summary = preg_replace('/<[^>]*>/', '', $summary);
-            if (mb_detect_encoding($summary) !== 'UTF-8') {
-                $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
+            $summary = '';
+            if (!empty($course->sumary)) {
+                $summary = $course->summary;
+                $summary = preg_replace('/<[^>]*>/', '', $summary);
+                if (mb_detect_encoding($summary) !== 'UTF-8') {
+                    $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
+                }
+                $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
             }
-            $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
 
             $content .= '<div class="card mb-3 h-100">';
 
@@ -122,6 +133,9 @@ class block_recommender extends block_base {
         $bestcourse = best_ratingcourse();
 
         $content .= $region ? '</div>' : '';
+
+        $content .= '<h4>Specials for you</h4>';
+
 
         $this->content = new stdClass();
         $this->content->text = $content;
