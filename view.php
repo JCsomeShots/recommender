@@ -174,7 +174,7 @@ function print_course_suggested($coursesuggested) {
         echo html_writer::start_tag('div', array('class' => 'card'));
         echo html_writer::start_tag('div', array('class' => 'card-body'));
         echo html_writer::tag('p', format_text($titlereduce, FORMAT_PLAIN), array('class' => 'card-text'));
-        echo html_writer::tag('p', format_text( $sumary, FORMAT_INT), array('class' => 'card-text'));
+        echo html_writer::tag('p', format_text( $sumary, FORMAT_PLAIN), array('class' => 'card-text'));
         echo html_writer::start_tag('p', array('class' => 'card-footer text-center'));
         echo html_writer::link(
             new moodle_url(
