@@ -252,13 +252,13 @@ function suggested_table() {
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
             FROM {course} c
             JOIN {block_recommender_suggested} br ON br.courseid = c.id 
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM {user_enrolments} ue
-                JOIN {enrol} e ON e.id = ue.enrolid
-                WHERE e.courseid = c.id
-                AND ue.userid = :current_user_id
-            )
+            -- WHERE NOT EXISTS (
+            --     SELECT 1
+            --     FROM {user_enrolments} ue
+            --     JOIN {enrol} e ON e.id = ue.enrolid
+            --     WHERE e.courseid = c.id
+            --     AND ue.userid = :current_user_id
+            -- )
             ORDER BY RAND()
             LIMIT 3";
     $params = ['current_user_id' => $current_user_id];

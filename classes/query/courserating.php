@@ -46,4 +46,3 @@ function courserating() {
     
     return $results = $results ?: 0;
 }
-

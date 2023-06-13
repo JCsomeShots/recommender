@@ -74,15 +74,17 @@ if ($action == 'del') {
 
 
 if ($selectcourse->is_cancelled()) {
-    if ($PAGE->has_blocks() && $PAGE->pagelayout == 'mydashboard') {
-        // El block está en el dashboard
-        $dashboard_url = new moodle_url('/my/');
-        redirect($dashboard_url);
-    } else {
-        // El block no está en el dashboard
-        $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
-        redirect($courseurl);
-    }
+    $dashboard_url = new moodle_url('/my/');
+    redirect($dashboard_url);
+    // if ($PAGE->has_blocks() && $PAGE->pagelayout == 'mydashboard') {
+    //     // El block está en el dashboard
+    //     $dashboard_url = new moodle_url('/my/');
+    //     redirect($dashboard_url);
+    // } else {
+    //     // El block no está en el dashboard
+    //     $courseurl = new moodle_url('/course/view.php', array('id' => $courseid));
+    //     redirect($courseurl);
+    // }
 } else if ($selectcourse->get_data() ) {
 
     // The real action to delete a message.

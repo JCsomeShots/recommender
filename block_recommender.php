@@ -26,9 +26,10 @@
 require_once("{$CFG->dirroot}/blocks/recommender/classes/event/organization.php");
 require_once("{$CFG->libdir}/accesslib.php");
 require_once("{$CFG->libdir}/blocklib.php");
-// require_once("{$CFG->dirroot}/blocks/recommender/classes/event/registerclick.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/query/courserating.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/userenrol.php");
 require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
+require_once("{$CFG->dirroot}/blocks/recommender/model.php");
 require_once(__DIR__.'/../../config.php');
 
 
@@ -61,8 +62,11 @@ class block_recommender extends block_base {
         $limit = $region ? 6 : 3;
         $heightlimit = 'height: 5px';
 
-        $courses = notenrol();
+        $coursesrand = notenrol();
+        $courses = best_ratingcourse();
         $coursessuggested = suggested_table();
+        $query = recommenderpython();
+        // var_dump($query);
         $clickform = new course_click();
         $param = new stdClass();
         $check = false;
@@ -81,8 +85,9 @@ class block_recommender extends block_base {
 
 
         foreach ($coursessuggested as $i => $course) {
+
             $summary = '';
-            if (!empty($course->sumary)) {
+            if (!empty($course->summary)) {
                 $summary = $course->summary;
                 $summary = preg_replace('/<[^>]*>/', '', $summary);
                 if (mb_detect_encoding($summary) !== 'UTF-8') {
@@ -123,7 +128,6 @@ class block_recommender extends block_base {
                 }
             }
         }
-        $bestcourse = best_ratingcourse();
 
         $content .= $region ? '</div>' : '';
 
@@ -137,7 +141,7 @@ class block_recommender extends block_base {
 
         foreach ($courses as $i => $course) {
             $summary = '';
-            if (!empty($course->sumary)) {
+            if (!empty($course->summary)) {
                 $summary = $course->summary;
                 $summary = preg_replace('/<[^>]*>/', '', $summary);
                 if (mb_detect_encoding($summary) !== 'UTF-8') {
@@ -178,11 +182,66 @@ class block_recommender extends block_base {
                 }
             }
         }
-        $bestcourse = best_ratingcourse();
+        // $bestcourse = best_ratingcourse();
 
         $content .= $region ? '</div>' : '';
 
         $content .= '<h4>Specials for you</h4>';
+
+        if ($region) {
+            $content .= '<div class="card-columns">';
+        }
+
+
+        $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
+
+
+        foreach ($coursesrand  as $i => $course) {
+
+            $summary = '';
+            if (!empty($course->summary)) {
+                $summary = $course->summary;
+                $summary = preg_replace('/<[^>]*>/', '', $summary);
+                if (mb_detect_encoding($summary) !== 'UTF-8') {
+                    $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
+                }
+                $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
+            }
+
+            $content .= '<div class="card mb-3 h-100">';
+
+            $content .= $card_img;
+
+            $content .= '<div class="card-body">';
+            $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+            $card_style = $region ? 'style="height:40px;"' : '';
+            $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
+            $content .= '</div>';
+
+            $content .= '<div class="card-footer">';
+            $param->user_id = $USER->id;
+            $param->course_id = $course->courseid;
+            $clickform->set_data($param);
+            $content .= $clickform->render();
+
+            $content .= '</div>';
+
+            $content .= $region ? $card_img : '';
+
+            $content .= '</div>';
+
+            if (!$click_saved && $fromform = $clickform->get_data()) {
+                if (!$check) {
+                    require_sesskey();
+                    $clickform->save_clicks($fromform->user_id, $fromform->course_id);
+                    $clickform->redirect($fromform->course_id);
+                    $check = true;
+                    $click_saved = true;
+                }
+            }
+        }
+
+        $content .= $region ? '</div>' : '';
 
 
         $this->content = new stdClass();
