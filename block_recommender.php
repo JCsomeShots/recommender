@@ -101,7 +101,7 @@ class block_recommender extends block_base {
             $content .= $card_img;
 
             $content .= '<div class="card-body">';
-            $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+            $content .= '<h5 class="card-title text-primary" >'.contarTresPalabras($course->fullname).'</h5>';
             $card_style = $region ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
@@ -155,7 +155,7 @@ class block_recommender extends block_base {
             $content .= $card_img;
 
             $content .= '<div class="card-body">';
-            $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+            $content .= '<h5 class="card-title text-primary" >'.contarTresPalabras($course->fullname).'</h5>';
             $card_style = $region ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
@@ -213,7 +213,7 @@ class block_recommender extends block_base {
             $content .= $card_img;
 
             $content .= '<div class="card-body">';
-            $content .= '<h5 class="card-title text-primary" >'.$course->fullname.'</h5>';
+            $content .= '<h5 class="card-title text-primary" >'.contarTresPalabras($course->fullname).'</h5>';
             $card_style = $region ? 'style="height:40px;"' : '';
             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
             $content .= '</div>';
@@ -356,3 +356,17 @@ if (is_siteadmin()) {
         return $coverimg;
     }
 }
+
+function contarTresPalabras($texto) {
+    // Separar el texto en palabras usando como delimitador el espacio (' ')
+    $palabras = explode(' ', $texto);
+  
+    // Contar las primeras tres palabras
+    $n_palabras = min(count($palabras), 3);
+  
+    // Armar un nuevo arreglo con las primeras tres palabras
+    $primeras_palabras = array_slice($palabras, 0, $n_palabras);
+  
+    // Devolver el número de palabras
+    return count($palabras);
+  }
