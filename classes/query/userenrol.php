@@ -75,7 +75,9 @@ function notenrol(){
                 JOIN {enrol} e ON e.id = ue.enrolid
                 WHERE e.courseid = c.id
                 AND ue.userid = :current_user_id
-            )";
+            )
+            ORDER BY RAND()
+            LIMIT 3";
     $params = ['current_user_id' => $current_user_id];
 
     // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
