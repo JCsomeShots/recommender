@@ -38,11 +38,11 @@ require_login();
  * @param Mixed $text .
  * @return Mixed .
  */
-function predict_recommender($text) {
+function predict_recommender($predict2) {
     // $inputapi[1] = $text;
-    $makecall = callapifr('POST', 'https://d75rw7c769oxjm63lab.online/recommender/4', json_encode($inputapi, true));
+    $makecall = callapifr('POST', 'https://d75rw7c769oxjm63lab.online/recommender', $predict2);
     $response = json_decode($makecall, true);
-    return $response[1];
+    return $response;
 }
 
 /**
@@ -51,11 +51,14 @@ function predict_recommender($text) {
  * @return Mixed .
  */
 function clean($string) {
-    $string = htmlentities(strtolower(strip_tags($string)));
-    return  preg_replace('/[^a-zA-Z0-9_ -]/s', ' ', $string); // Removes special chars.
+    $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+    $string = strtolower(strip_tags($string));
+    // $string = preg_replace('/[^a-zA-Z0-9_ -ñÑáÁéÉíÍóÓúÚ]/u', '', $string);
 
-    // $string = htmlspecialchars(strtolower($string), ENT_QUOTES, "UTF-8");
-    // return preg_replace('/[^a-zA-Z0-9_ -]/s', ' ', $string); 
+    return  preg_replace('/[^a-zA-Z0-9_ -]/s', '', $string); // Removes special chars.
+
+    // return  $string;
+
 }
 
 /**
@@ -123,22 +126,24 @@ function recommenderpython() {
     $predict = array();
     // var_dump($courses);
     foreach ($courses as $c) { 
-        $fullname = clean($c->fullname);
-        $summary = clean( $c->summary);
-        // var_dump($c->summary);
-        // var_dump($summary);
-        if (empty($fullname)) {
-            $predict[$fullname] = $fullname;
-        } else {
-            $predict[$fullname] = $summary;
-        } 
+        $fullname = !empty(trim($c->fullname)) ? clean($c->fullname) : "";        
+        $summary = !empty(trim($c->summary)) ? clean($c->summary) : "";
+        $predict[$c->id] = $fullname . $summary ;
     }
-    // print_object($predict);
     $predict2 =  json_encode($predict, true);
-    // print_object($predict2);
+    print_object($predict2);
+    $result = predict_recommender($predict2);
+    print_object($result);
     // return $predict;
 
 }
 
 
 
+function cleanText($string){
+    $string = strip_tags($string);
+    $string = strtolower($string);
+    // $string = preg_replace('/[^a-zA-Z0-9_ -]/s', ' ', $string); 
+    $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+    return $string;
+}
