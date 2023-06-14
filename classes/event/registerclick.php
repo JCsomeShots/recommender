@@ -36,8 +36,9 @@ require_login();
 
     $precheck = $DB->record_exists('block_recommender_clicks', array('userid' => $iduser));
 
-    // if ($precheck == false) {
-    // }
+    if ($precheck != false) {
+        
+    }
     
     // $record = new stdClass();
     // $record->userid = $iduser;
@@ -45,4 +46,4 @@ require_login();
     // $record->timemodified = time();
     // $DB->insert_record('block_recommender_clicks', $record);
 
-echo 'sucess';
+// echo 'sucess';

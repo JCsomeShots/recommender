@@ -30,16 +30,16 @@ function registerClick(userid, courseid) {
     u = userid.toString();
     c = courseid.toString();
     alert([ u, c]);
-    $(document).ready(function() {
-        $.ajax({
-            // type: "POST",
-            url: "blocks/recommender/classes/event/registerclick.php",
-            data: { u, c},
-            success: function(data) {
-                console.log(data);
-            },
-        })
-    });
+    // $(document).ready(function() {
+    //     $.ajax({
+    //         // type: "POST",
+    //         url: "blocks/recommender/classes/event/registerclick.php",
+    //         data: { u, c},
+    //         success: function(data) {
+    //             console.log(data);
+    //         },
+    //     })
+    // });
 }
 
 
