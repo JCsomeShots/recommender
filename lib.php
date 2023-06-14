@@ -44,7 +44,8 @@ function best_ratingcourse() {
     global $DB;
 
     // Obtener los 3 cursos con más estudiantes inscritos
-    $sql = "SELECT COUNT(DISTINCT ue.userid) AS num_students, c.id AS course_id, c.fullname, c.summary
+    // -- $sql = "SELECT c.id AS course_id, c.fullname, c.summary
+    $sql = "SELECT COUNT(DISTINCT ue.userid) AS num_students, c.id AS courseid, c.fullname, c.summary
     FROM {user_enrolments} ue
     JOIN {enrol} e ON ue.enrolid = e.id
     JOIN {course} c ON c.id = e.courseid
@@ -55,10 +56,7 @@ function best_ratingcourse() {
     $courses = $DB->get_records_sql($sql);
 
     return $courses;
-    // Imprimir los resultados
-    // foreach ($courses as $course) {
-    // echo "El curso " . $course->course_name . " con ID " . $course->course_id . " tiene " . $course->num_students . " estudiantes inscritos. <br>";
-    // }
+    
 }
 
 // function get_top_completed_courses() {

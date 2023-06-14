@@ -90,10 +90,6 @@ class block_recommender extends block_base {
             $summary = get_summary($course->summary);
             $icon = '<i class="fa fa-3x m-2 ml-3 fa-bolt" style="opacity:0.2; color:white;"></i>';
             $bgcolor = '#6E81BE';
-         
-
-            // var_dump($course);
-    
             $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
         }
     
@@ -105,17 +101,15 @@ class block_recommender extends block_base {
 
     
         if ($region) {
-            // $content .= '<div class="card-columns">';
             $content .= '<div class="card-deck d-flex justify-content-between">';
         }
     
         foreach (array_slice($coursespopular, 0, $limit) as $course) {
             $summary = get_summary($course->summary);
+            var_dump($course->courseid);
             $icon = '<i class="fa fa-3x m-2 ml-3 fa-thumbs-up" style="opacity:0.2; color:white;"></i>';
             $bgcolor = '#9CCF65';
 
-            // var_dump($course);
-    
             $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
         }
     
@@ -127,7 +121,6 @@ class block_recommender extends block_base {
 
     
         if ($region) {
-            // $content .= '<div class="card-columns">';
             $content .= '<div class="card-deck">';
         }
     
@@ -135,10 +128,6 @@ class block_recommender extends block_base {
             $summary = get_summary($course->summary);
             $icon = '<i class="fa fa-3x m-2 ml-3 fa-star" style="opacity:0.2; color:white;"></i>';
             $bgcolor = '#C65D52';
-
-
-            // var_dump($course);
-    
             $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
         }
     
@@ -155,213 +144,6 @@ class block_recommender extends block_base {
         return $this->content;
     }
     
-
-//     public function get_content() {
-//         global $USER, $COURSE;
-
-//         $instanceblock = $this->instance;
-//         $region = $instanceblock->defaultregion == 'content';
-//         $limit = $region ? 6 : 3;
-//         $heightlimit = 'height: 5px';
-
-//         $coursesrand = notenrol();
-//         $courses = best_ratingcourse();
-//         $coursessuggested = suggested_table();
-//         $query = recommenderpython();
-//         // var_dump($query);
-//         $clickform = new course_click();
-//         $param = new stdClass();
-//         $check = false;
-//         $click_saved = false;
-
-//         $content = '';
-
-//         $content .= '<div><h4>Suggested courses</h4></div>';
-
-//         if ($region) {
-//             $content .= '<div class="card-group">';
-//         }
-
-
-//         // $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
-
-
-//         foreach ($coursessuggested as $i => $course) {
-
-//             $summary = '';
-//             if (!empty($course->summary)) {
-//                 $summary = $course->summary;
-//                 $summary = preg_replace('/<[^>]*>/', '', $summary);
-//                 if (mb_detect_encoding($summary) !== 'UTF-8') {
-//                     $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
-//                 }
-//                 $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-//             }
-
-//             $content .= '<div class="card mb-3 mr-3 rounded">';
-
-//             $content .= $card_img;
-
-//             $content .= '<div class="card-body">';
-//             $content .= '<h5 class="card-title text-primary text-center" >'.countthreewords($course->fullname).'</h5>';
-//             $card_style = $region ? 'style="height:40px;"' : '';
-//             $content .= '<p class="card-text text-dark text-center"'.$card_style.'>'.$summary.'</p>';
-//             $content .= '</div>';
-
-//             // $content .= '<div class="card-footer">';
-//             $param->user_id = $USER->id;
-//             $param->course_id = $course->courseid;
-//             $clickform->set_data($param);
-//             $content .= $clickform->render();
-
-//             // $content .= '</div>';
-
-//             $content .= $region ? $card_img : '';
-
-//             $content .= '</div>';
-
-//             if (!$click_saved && $fromform = $clickform->get_data()) {
-//                 if (!$check) {
-//                     require_sesskey();
-//                     $clickform->save_clicks($fromform->user_id, $fromform->course_id);
-//                     $clickform->redirect($fromform->course_id);
-//                     $check = true;
-//                     $click_saved = true;
-//                 }
-//             }
-//         }
-
-//         $content .= $region ? '</div>' : '';
-
-//         $content .= '<div><h4>Most popular</h4></div>';
-//         if ($region) {
-//             $content .= '<div class="card-columns">';
-//         }
-
-//         $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
-
-
-//         foreach ($courses as $i => $course) {
-//             $summary = '';
-//             if (!empty($course->summary)) {
-//                 $summary = $course->summary;
-//                 $summary = preg_replace('/<[^>]*>/', '', $summary);
-//                 if (mb_detect_encoding($summary) !== 'UTF-8') {
-//                     $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
-//                 }
-//                 $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-//             }
-
-//             $content .= '<div class="card mb-3 h-100">';
-
-//             $content .= $card_img;
-
-//             $content .= '<div class="card-body">';
-//             $content .= '<h5 class="card-title text-primary" >'.countthreewords($course->fullname).'</h5>';
-//             $card_style = $region ? 'style="height:40px;"' : '';
-//             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
-//             $content .= '</div>';
-
-//             $content .= '<div class="card-footer">';
-//             $param->user_id = $USER->id;
-//             $param->course_id = $course->courseid;
-//             $clickform->set_data($param);
-//             $content .= $clickform->render();
-
-//             $content .= '</div>';
-
-//             $content .= $region ? $card_img : '';
-
-//             $content .= '</div>';
-
-//             if (!$click_saved && $fromform = $clickform->get_data()) {
-//                 if (!$check) {
-//                     require_sesskey();
-//                     $clickform->save_clicks($fromform->user_id, $fromform->course_id);
-//                     $clickform->redirect($fromform->course_id);
-//                     $check = true;
-//                     $click_saved = true;
-//                 }
-//             }
-//         }
-//         // $bestcourse = best_ratingcourse();
-
-//         $content .= $region ? '</div>' : '';
-
-//         $content .= '<h4>Specials for you</h4>';
-
-//         if ($region) {
-//             $content .= '<div class="card-columns">';
-//         }
-
-
-//         $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
-
-
-//         foreach ($coursesrand  as $i => $course) {
-
-//             $summary = '';
-//             if (!empty($course->summary)) {
-//                 $summary = $course->summary;
-//                 $summary = preg_replace('/<[^>]*>/', '', $summary);
-//                 if (mb_detect_encoding($summary) !== 'UTF-8') {
-//                     $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
-//                 }
-//                 $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-//             }
-
-//             $content .= '<div class="card mb-3 h-100">';
-
-//             $content .= $card_img;
-
-//             $content .= '<div class="card-body">';
-//             $content .= '<h5 class="card-title text-primary" >'.countthreewords($course->fullname).'</h5>';
-//             $card_style = $region ? 'style="height:40px;"' : '';
-//             $content .= '<p class="card-text text-dark"'.$card_style.'>'.$summary.'</p>';
-//             $content .= '</div>';
-
-//             $content .= '<div class="card-footer">';
-//             $param->user_id = $USER->id;
-//             $param->course_id = $course->courseid;
-//             $clickform->set_data($param);
-//             $content .= $clickform->render();
-
-//             $content .= '</div>';
-
-//             $content .= $region ? $card_img : '';
-
-//             $content .= '</div>';
-
-//             if (!$click_saved && $fromform = $clickform->get_data()) {
-//                 if (!$check) {
-//                     require_sesskey();
-//                     $clickform->save_clicks($fromform->user_id, $fromform->course_id);
-//                     $clickform->redirect($fromform->course_id);
-//                     $check = true;
-//                     $click_saved = true;
-//                 }
-//             }
-//         }
-
-//         $content .= $region ? '</div>' : '';
-
-
-//         $this->content = new stdClass();
-//         $this->content->text = $content;
-
-// if (is_siteadmin()) {
-
-//     $url = new moodle_url(
-//         '/blocks/recommender/view.php',
-//         array('blockid' => $this->instance->id, 'courseid' => $COURSE->id)
-//     );
-
-//     $this->content->footer = html_writer::link($url, get_string('addpage', 'block_recommender'));
-// }
-
-//         return $this->content;
-//     }
-
 
 
     /**
