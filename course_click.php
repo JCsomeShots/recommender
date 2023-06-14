@@ -42,12 +42,21 @@ class course_click extends moodleform {
         $mform->settype('user_id', PARAM_INT);
         $mform->addElement('hidden', 'course_id');
         $mform->settype('course_id', PARAM_INT);
-        $d = get_string('go', 'block_recommender');
-        $mform->addElement('submit',
-        'submitbutton',
-        $d,
-        ['class' => 'go_recommender m-1',
-        'style' => "background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae)"]);
+
+        // $d = get_string('go', 'block_recommender');
+        // $mform->addElement('submit',
+        // 'submitbutton',
+        // $d,
+        // ['class' => 'go_recommender m-1 rounded d-flex justify-content-center bg-white text-dark border border-white text-center',
+        // ]);
+     
+     
+
+        $button = '<div class="d-flex justify-content-center my-2">';
+        $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.get_string('go', 'block_recommender').'</button> ';
+        $button .= '</div>';
+        $mform->addElement('html', $button);
+    
     }
 
     /**
@@ -58,9 +67,9 @@ class course_click extends moodleform {
         global $PAGE;
 
         var_dump($courseid);
-        if ($PAGE->course->id != $courseid && empty($courseid)) {
-            redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
-        }    
+        // if ($PAGE->course->id != $courseid && empty($courseid)) {
+        //     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
+        // }    
         redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
     }
 

@@ -261,7 +261,7 @@ function suggested_table() {
             --     WHERE e.courseid = c.id
             --     AND ue.userid = :current_user_id
             -- )
-            ORDER BY RAND()
+            ORDER BY  c.id ASC
             LIMIT 3";
     $params = ['current_user_id' => $current_user_id];
 
