@@ -57,8 +57,8 @@ class block_recommender extends block_base {
     public function get_content() {
         global $USER, $COURSE;
 
-        $coursescompleted = get_top_completed_courses();
-        var_dump($coursescompleted);
+        // $coursescompleted = get_top_completed_courses();
+        // var_dump($coursescompleted);
     
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
@@ -79,6 +79,8 @@ class block_recommender extends block_base {
     
         // Suggested courses section
         $content .= '<div><h4>Suggested courses</h4></div>';
+        $content .= '<div><h6>Subtitle</h4></div>';
+
     
         if ($region) {
             $content .= '<div class="card-columns">';
@@ -96,6 +98,8 @@ class block_recommender extends block_base {
     
         // Most popular section
         $content .= '<div><h4>Most popular</h4></div>';
+        $content .= '<div><h6>Subtitle</h4></div>';
+
     
         if ($region) {
             $content .= '<div class="card-columns">';
@@ -110,7 +114,8 @@ class block_recommender extends block_base {
         $content .= $region ? '</div>' : '';
     
         // Specials for you section
-        $content .= '<h4>Specials for you</h4>';
+        $content .= '<div><h4>Specials for you</h4></div>';
+        $content .= '<div><h6>Subtitle</h4></div>';
     
         if ($region) {
             $content .= '<div class="card-columns">';

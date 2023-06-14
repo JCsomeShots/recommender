@@ -61,50 +61,50 @@ function best_ratingcourse() {
     // }
 }
 
-function get_top_completed_courses() {
-    global $DB;
+// function get_top_completed_courses() {
+//     global $DB;
 
-    // Get all the visible courses
-    $courses = $DB->get_records('course', ['visible' => 1]);
+//     // Get all the visible courses
+//     $courses = $DB->get_records('course', ['visible' => 1]);
 
-    $completed_courses = [];
+//     $completed_courses = [];
 
-    // Calculate the completion percentage for each course
-    foreach ($courses as $course) {
-        // Get the completion percentage for the course
-        $completion_percentage = course_completion_percentage($course);
+//     // Calculate the completion percentage for each course
+//     foreach ($courses as $course) {
+//         // Get the completion percentage for the course
+//         $completion_percentage = course_completion_percentage($course);
 
-        // Add the completion percentage to the course object
-        $course->completion_percentage = $completion_percentage;
+//         // Add the completion percentage to the course object
+//         $course->completion_percentage = $completion_percentage;
 
-        // Add the course to the completed_courses array
-        $completed_courses[] = $course;
-    }
+//         // Add the course to the completed_courses array
+//         $completed_courses[] = $course;
+//     }
 
-    // Sort the completed courses array in descending order of completion percentage
-    usort($completed_courses, function($a, $b) {
-        return $b->completion_percentage - $a->completion_percentage;
-    });
+//     // Sort the completed courses array in descending order of completion percentage
+//     usort($completed_courses, function($a, $b) {
+//         return $b->completion_percentage - $a->completion_percentage;
+//     });
 
-    // Return the top 3 completed courses
-    echo array_slice($completed_courses, 0, 3);
-}
+//     // Return the top 3 completed courses
+//     echo array_slice($completed_courses, 0, 3);
+// }
 
 // Helper function to calculate course completion percentage
-function course_completion_percentage($course) {
-    global $DB;
+// function course_completion_percentage($course) {
+//     global $DB;
 
-    $cm = get_coursemodule_from_instance('course', $course->id);
-    $completion = new \completion_info($course);
-    $completion_data = $completion->get_data($cm);
-    $completion_percentage = 0;
+//     $cm = get_coursemodule_from_instance('course', $course->id);
+//     $completion = new \completion_info($course);
+//     $completion_data = $completion->get_data($cm);
+//     $completion_percentage = 0;
 
-    if (!empty($completion_data)) {
-        $completion_percentage = $completion_data->completionstate;
-    }
+//     if (!empty($completion_data)) {
+//         $completion_percentage = $completion_data->completionstate;
+//     }
 
-    return $completion_percentage;
-}
+//     return $completion_percentage;
+// }
 
 function add_recommended_block() {
     global $DB, $CFG;
