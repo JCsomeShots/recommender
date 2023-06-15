@@ -35,7 +35,7 @@ class course_click extends moodleform {
     /**
      * Add elements to form.
      */
-    public function definition() {
+    public function definition()  {
 
         $mform = $this->_form;
         $mform->addElement('hidden', 'user_id');
@@ -43,21 +43,21 @@ class course_click extends moodleform {
         $mform->addElement('hidden', 'course_id');
         $mform->settype('course_id', PARAM_INT);
 
-        // $d = get_string('go', 'block_recommender');
-        // $mform->addElement('submit',
-        // 'submitbutton',
-        // $d,
-        // ['class' => 'go_recommender m-1 rounded d-flex justify-content-center bg-white text-dark border border-white text-center',
-        // ]);
-     
-     
+        $mform->addElement('hidden', 'title', $this->_customdata['title']);
+        $mform->setType('title', PARAM_TEXT);
+        $mform->addElement('hidden', 'region', $this->_customdata['region']);
+        $mform->setType('region', PARAM_TEXT);
 
+        $button_title = ($this->_customdata['region']) ? get_string('go', 'block_recommender') : $this->_customdata['title'];
         $button = '<div class="d-flex justify-content-center my-2">';
-        $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.get_string('go', 'block_recommender').'</button> ';
+        $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.$button_title.'</button> ';
         $button .= '</div>';
         $mform->addElement('html', $button);
-    
+        
     }
+    // $button = '<div class="d-flex justify-content-center my-2">';
+    // $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.get_string('go', 'block_recommender').'</button> ';
+    // $button .= '</div>';
 
     /**
      * to redirect to forum_review

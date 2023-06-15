@@ -60,7 +60,7 @@ class block_recommender extends block_base {
 
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
-        $limit = $region ? 3 : 2;
+        $limit = $region ? 3 : 3;
         $heightlimit = 'height: 5px';
 
         recommenderpython();
@@ -280,12 +280,13 @@ function get_summary($summary) {
 function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, $region, $iconimg, $bgcolor) {
     // $card = '<div class="card mb-3 rounded border border-primary mr-3">';
 
-    $card = '<div class="card mb-3 rounded border border-primary mr-3';
-
+    
     if ($region) {
+        $card = '<div class="card mb-3 rounded border border-primary mr-3';
         $card .= ' card-sm'; 
         $iconsize = 'fa-3x';
     } else {
+        $card = '<div class="card rounded border border-primary mr-3';
         $iconsize = 'fa-2x';
     }
 
@@ -293,7 +294,7 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
     $card .= '<div class="card-body border rounded-top" style="background-color:'.$bgcolor.';">';
 
     if (!$region) { 
-        $card .= '<div style="background-color:'.$bgcolor.';" class="d-flex align-item-center">';
+        $card .= '<div style="background-color:'.$bgcolor.';" class="d-flex align-item-center justify-content-center">';
         $icon = '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
     } else {
         $card .= '<div style="background-color:'.$bgcolor.';">';
@@ -310,6 +311,10 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
     $param = new stdClass();
     $param->user_id = $USER->id;
     $param->course_id = $course->courseid;
+    if (!$region) {
+        $param->title = $course->fullname;
+        $param->region = $region;
+    }
     $clickform->set_data($param);
     $card .= $clickform->render();
     $card .= '</div>';
