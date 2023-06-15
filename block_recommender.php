@@ -28,6 +28,7 @@ require_once("{$CFG->libdir}/accesslib.php");
 require_once("{$CFG->libdir}/blocklib.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/courserating.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/userenrol.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/query/coursesrelated.php");
 require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
 require_once("{$CFG->dirroot}/blocks/recommender/model_recommender.php");
 require_once(__DIR__.'/../../config.php');
@@ -55,19 +56,17 @@ class block_recommender extends block_base {
      * @return Mixed $this->content.
      */
     public function get_content() {
-        global $USER, $COURSE, $PAGE;
-        $PAGE->requires->css(new \moodle_url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css'));
+        global $USER, $COURSE;
 
         $instanceblock = $this->instance;
         $region = $instanceblock->defaultregion == 'content';
         $limit = $region ? 3 : 2;
         $heightlimit = 'height: 5px';
-    
-        $coursesrand = notenrol();
+
+        recommenderpython();
+        $coursesrelated =  get_related_courses();    
         $coursespopular = best_ratingcourse();
         $coursessuggested = suggested_table();
-        $query = recommenderpython();
-        // var_dump($query);
         $clickform = new course_click();
         $param = new stdClass();
         $check = false;
@@ -75,73 +74,75 @@ class block_recommender extends block_base {
     
         $content = '';
     
-        // Suggested courses section
-        $content .= '<div><h5>Suggested courses</h5></div>';
-        $content .= '<div><h6>Subtitle</h6></div>';
-    
-        if ($region) {
-            // $content .= '<div class="card-columns">';
-            $content .= '<div class="card-deck">';
-        }
-    
-        $card_img = '<div class="card-img dashboard-card-img " style="background-image: linear-gradient(to bottom left, #465f9b, #755794, #6d76ae); '.$heightlimit.'"></div>';
-    
-        foreach (array_slice($coursessuggested, 0, $limit) as $course) {
-            $summary = get_summary($course->summary);
-            $icon = '<i class="fa fa-3x m-2 ml-3 fa-bolt" style="opacity:0.2; color:white;"></i>';
-            $bgcolor = '#6E81BE';
-            $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
-        }
-    
-        $content .= $region ? '</div>' : '';
-    
-        // Most popular section
-        $content .= '<div mt-2><h5>Most popular</h5></div>';
-        $content .= '<div><h6>Subtitle</h6></div>';
+        if (!empty($coursessuggested)) {
 
-    
-        if ($region) {
-            $content .= '<div class="card-deck d-flex justify-content-between">';
-        }
-    
-        foreach (array_slice($coursespopular, 0, $limit) as $course) {
-            $summary = get_summary($course->summary);
-            var_dump($course->courseid);
-            $icon = '<i class="fa fa-3x m-2 ml-3 fa-thumbs-up" style="opacity:0.2; color:white;"></i>';
-            $bgcolor = '#9CCF65';
+            // Suggested courses section
+            $content .= '<div><h5>Suggested courses</h5></div>';
+            $content .= '<div><h6>Subtitle</h6></div>';
 
-            $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
-        }
-    
-        $content .= $region ? '</div>' : '';
-    
-        // Specials for you section
-        $content .= '<div mt-2><h5>Specials for you</h5></div>';
-        $content .= '<div><h6>Subtitle</h6></div>';
+            if ($region) {
+                $content .= '<div class="card-deck">';
+            }
 
-    
-        if ($region) {
-            $content .= '<div class="card-deck">';
+            foreach (array_slice($coursessuggested, 0, $limit) as $course) {
+                $summary = get_summary($course->summary);
+                $iconimg = 'fa-bolt';
+                $bgcolor = '#6E81BE';
+                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+            }
+
+            $content .= $region ? '</div>' : '';
+        }
+
+        if (!empty($coursespopular)) {
+
+            // Most popular section
+            $content .= '<div mt-2><h5>Most popular</h5></div>';
+            $content .= '<div><h6>Subtitle</h6></div>';
+
+            if ($region) {
+                $content .= '<div class="card-deck d-flex justify-content-between">';
+            }
+
+            foreach (array_slice($coursespopular, 0, $limit) as $course) {
+                $summary = get_summary($course->summary);
+                $iconimg = 'fa-thumbs-up';
+                $bgcolor = '#9CCF65';
+                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+            }
+
+            $content .= $region ? '</div>' : '';
         }
     
-        foreach (array_slice($coursesrand, 0, $limit) as $course) {
-            $summary = get_summary($course->summary);
-            $icon = '<i class="fa fa-3x m-2 ml-3 fa-star" style="opacity:0.2; color:white;"></i>';
-            $bgcolor = '#C65D52';
-            $content .= get_card($course, $summary, $card_img, $clickform, $USER, $check, $click_saved, $region, $icon, $bgcolor);
+        if (!empty($coursesrelated)) {
+
+            // Specials for you section
+            $content .= '<div mt-2><h5>Specials for you</h5></div>';
+            $content .= '<div><h6>Subtitle</h6></div>';
+
+            if ($region) {
+                $content .= '<div class="card-deck">';
+            }
+
+            foreach (array_slice($coursesrelated, 0, $limit) as $course) {
+                $summary = get_summary($course->summary);
+                $iconimg = 'fa-star';
+                $bgcolor = '#C65D52';
+                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+            }
+
+            $content .= $region ? '</div>' : '';
+
+            $this->content = new stdClass();
+            $this->content->text = $content;
+
+            if (is_siteadmin()) {
+                $url = new moodle_url('/blocks/recommender/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
+                $this->content->footer = html_writer::link($url, get_string('addpage', 'block_recommender'));
+            }
+
+            return $this->content;
         }
-    
-        $content .= $region ? '</div>' : '';
-    
-        $this->content = new stdClass();
-        $this->content->text = $content;
-    
-        if (is_siteadmin()) {
-            $url = new moodle_url('/blocks/recommender/view.php', array('blockid' => $this->instance->id, 'courseid' => $COURSE->id));
-            $this->content->footer = html_writer::link($url, get_string('addpage', 'block_recommender'));
-        }
-    
-        return $this->content;
     }
     
 
@@ -276,12 +277,29 @@ function get_summary($summary) {
     return $summary;
 }
 
-function get_card($course, $summary, $card_img, $clickform, $USER, &$check, &$click_saved, $region, $icon, $bgcolor) {
-    $card = '<div class="card mb-3 rounded border border-primary mr-3">';
+function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, $region, $iconimg, $bgcolor) {
+    // $card = '<div class="card mb-3 rounded border border-primary mr-3">';
 
+    $card = '<div class="card mb-3 rounded border border-primary mr-3';
+
+    if ($region) {
+        $card .= ' card-sm'; 
+        $iconsize = 'fa-3x';
+    } else {
+        $iconsize = 'fa-2x';
+    }
+
+    $card .= '">';
     $card .= '<div class="card-body border rounded-top" style="background-color:'.$bgcolor.';">';
 
-    $card .= '<div style="background-color:'.$bgcolor.';">';
+    if (!$region) { 
+        $card .= '<div style="background-color:'.$bgcolor.';" class="d-flex align-item-center">';
+        $icon = '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
+    } else {
+        $card .= '<div style="background-color:'.$bgcolor.';">';
+        $icon = '<i class="fa '.$iconsize.' m-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
+    }
+
     $card .= $icon;
     $card .= '<h5 class="card-title text-white text-center">'.countthreewords($course->fullname).'</h5>';
     $card .= $region ? '<p class="card-text text-center text-white  ">'.$summary.'</p>' : '';

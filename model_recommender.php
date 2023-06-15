@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../config.php');
-// require_once($CFG->dirroot. '/blocks/recommender/query.php');
 require_once($CFG->dirroot. '/blocks/recommender/lib.php');
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/courserating.php");
 
@@ -39,7 +38,6 @@ require_login();
  * @return Mixed .
  */
 function predict_recommender($predict2) {
-    // $inputapi[1] = $text;
     $makecall = callapifr('POST', 'https://d75rw7c769oxjm63lab.online/recommender', $predict2);
     $response = json_decode($makecall, true);
     return $response;
@@ -50,15 +48,10 @@ function predict_recommender($predict2) {
  * @param Mixed $string .
  * @return Mixed .
  */
-function clean($string) {
+function clean_recommender($string) {
     $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
     $string = strtolower(strip_tags($string));
-    // $string = preg_replace('/[^a-zA-Z0-9_ -ñÑáÁéÉíÍóÓúÚ]/u', '', $string);
-
     return  preg_replace('/[^a-zA-Z0-9_ -]/s', '', $string); // Removes special chars.
-
-    // return  $string;
-
 }
 
 /**
@@ -113,37 +106,46 @@ function get_coursesummary() {
     global $DB;
     $sql = "SELECT c.id, c.fullname, c.summary FROM {course} c";
     $result = $DB->get_records_sql($sql);
-    // $coursesSummary = array();
-    // foreach ($result as $c) {
-    //     $coursesSummary[$c->fullname] = $c->summary;
-    // }
-    // var_dump($result);
     return $result ;
 }
 
 function recommenderpython() {
     $courses = get_coursesummary();
     $predict = array();
-    // var_dump($courses);
     foreach ($courses as $c) { 
-        $fullname = !empty(trim($c->fullname)) ? clean($c->fullname) : "";        
-        $summary = !empty(trim($c->summary)) ? clean($c->summary) : "";
+        $fullname = !empty(trim($c->fullname)) ? clean_recommender($c->fullname) : "";        
+        $summary = !empty(trim($c->summary)) ? clean_recommender($c->summary) : "";
         $predict[$c->id] = $fullname . $summary ;
     }
     $predict2 =  json_encode($predict, true);
-    print_object($predict2);
     $result = predict_recommender($predict2);
-    print_object($result);
-    // return $predict;
-
+    save_related_courses($result);
 }
 
+function save_related_courses($result) {
 
+    global $DB;
+    $table_name = 'block_recommender_descrip';
+    $data = array();
+    foreach($result as $key => $value) {
+        $courses = array();
+        foreach ($value as $item) {
+            array_push($courses, $item);
+        }
 
-function cleanText($string){
-    $string = strip_tags($string);
-    $string = strtolower($string);
-    // $string = preg_replace('/[^a-zA-Z0-9_ -]/s', ' ', $string); 
-    $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
-    return $string;
+        $record = new stdClass();
+        $record->courseid = $key;
+        $related_courses_serialized = serialize($courses);
+        $record->related_courses = $related_courses_serialized;
+
+        $existing = $DB->get_record($table_name, array('courseid' => $key));
+
+        if ($existing) {
+            $record->id = $existing->id;
+            $DB->update_record($table_name, $record);
+        } else {
+            $DB->insert_record($table_name, $record);
+        }
+    }
+
 }

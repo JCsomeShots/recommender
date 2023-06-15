@@ -94,7 +94,6 @@ function updaterecommender($iduser, $idcourse){
 
     if ($precheck && !empty($enrol)  ) {
 
-
         $record = new stdClass();
         $record->userid = $iduser;
         $record->courseid = $idcourse;
@@ -106,9 +105,7 @@ function updaterecommender($iduser, $idcourse){
 
 /**
  * Returns the course with the most enrolments.
- *
  * This function iterates through all the courses in Moodle and counts the number of users enrolled in each course. It then returns the course with the highest enrolment count.
- *
  * @return object The course object with the most enrolments.
  */
 function get_course_with_most_enrolments() {
@@ -136,9 +133,7 @@ function get_course_with_most_enrolments() {
 
 /**
  * Devuelve una matriz con los 3 cursos con más inscripciones.
- *
  * Esta función recorre todos los cursos en Moodle y cuenta el número de inscripciones para cada curso. Luego devuelve una matriz con los 3 cursos con el recuento de inscripción más alto.
- *
  * @return array La matriz con los 3 cursos con más inscripciones.
  */
 function get_top_courses_by_enrolment() {
@@ -176,9 +171,7 @@ function get_top_courses_by_enrolment() {
 
 /**
  * Returns the course with the most users who have completed the course.
- *
  * This function loops through all the courses in Moodle and counts the number of users who have completed each course. It then returns the course with the highest completion count.
- *
  * @return object The course object with the most users who have completed the course.
  */
 function get_course_with_most_completed_users() {
@@ -206,9 +199,7 @@ function get_course_with_most_completed_users() {
 
 /**
  * Devuelve una matriz con los 3 cursos con más usuarios que han completado el curso.
- *
  * Esta función recorre todos los cursos en Moodle y cuenta el número de usuarios que han completado el curso. Luego devuelve una matriz con los 3 cursos con el recuento de finalización más alto.
- *
  * @return array La matriz con los 3 cursos con más usuarios que han completado el curso.
  */
 function get_top_courses_by_completion() {
@@ -247,10 +238,7 @@ function get_top_courses_by_completion() {
 function suggested_table() {
 
     global $DB, $USER;
-
     $current_user_id = $USER->id;
-
-    // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
             FROM {course} c
             JOIN {block_recommender_suggested} br ON br.courseid = c.id 
@@ -261,14 +249,15 @@ function suggested_table() {
             --     WHERE e.courseid = c.id
             --     AND ue.userid = :current_user_id
             -- )
-            ORDER BY  c.id ASC
-            LIMIT 3";
+            ORDER BY c.id ASC
+            -- LIMIT 3
+            ";
     $params = ['current_user_id' => $current_user_id];
 
-    // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
     $results = $DB->get_records_sql($sql, $params);
-
+    if (count($results) > 3) {
+        shuffle($results);
+        $results = array_slice($results, 0, 3);
+    }
     return $results;
-
 }
-
