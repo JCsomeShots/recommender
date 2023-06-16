@@ -115,11 +115,21 @@ function recommenderpython() {
     foreach ($courses as $c) { 
         $fullname = !empty(trim($c->fullname)) ? clean_recommender($c->fullname) : "";        
         $summary = !empty(trim($c->summary)) ? clean_recommender($c->summary) : "";
+        // var_dump($fullname);
+        // var_dump($summary);
         $predict[$c->id] = $fullname . $summary ;
     }
     $predict2 =  json_encode($predict, true);
+    // var_dump($predict);
+    // var_dump($predict);
+    // var_dump($predict);
+    // var_dump($predict2);
+        // print_object($predict);
     $result = predict_recommender($predict2);
     save_related_courses($result);
+//     var_dump($result);
+//     var_dump(gettype($result));
+//     print_object($result);
 }
 
 function save_related_courses($result) {
@@ -129,6 +139,8 @@ function save_related_courses($result) {
     $data = array();
     foreach($result as $key => $value) {
         $courses = array();
+        // var_dump($value);
+        // var_dump(gettype($value));
         foreach ($value as $item) {
             array_push($courses, $item);
         }
@@ -149,3 +161,4 @@ function save_related_courses($result) {
     }
 
 }
+

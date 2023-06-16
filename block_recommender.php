@@ -65,7 +65,8 @@ class block_recommender extends block_base {
         $heightlimit = 'height: 5px';
 
         recommenderpython();
-        $coursesrelated =  get_related_courses();    
+        $coursesrelated =  get_related_courses(); 
+        $coursesnotenrol = notenrol();   
         $coursespopular = best_ratingcourse();
         $coursessuggested = suggested_table();
         $clickform = new course_click();
@@ -76,6 +77,8 @@ class block_recommender extends block_base {
         $content = '';
     
         if (!empty($coursessuggested)) {
+            $num_courses = count($coursessuggested); 
+
 
             // Suggested courses section
             if ($region) {
@@ -83,8 +86,10 @@ class block_recommender extends block_base {
                 $content .= '<div><h6>'.get_string('subtitle1', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between">';
             } else {
-                $content .= '<div><h5>'.get_string('title1', 'block_recommender').'</h5><p>'.get_string('subtitle1', 'block_recommender').'</p></div>';
-                $content .= '<ul class="mb-0">';
+                $content .= '<div class="mb-2"><h5>'.get_string('title1', 'block_recommender').'</h5>';
+                // $content .= '<p>'.get_string('subtitle1', 'block_recommender').'</p>';
+                $content .= '</div>';
+                $content .= '<ul class="mb-0 mt-2"">';
             }
 
             foreach (array_slice($coursessuggested, 0, $limit) as $course) {
@@ -97,21 +102,40 @@ class block_recommender extends block_base {
                     $content .= get_list_course($course, $USER, $iconimg);
                 }
             }
+            if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
+                $difference = $limit - $num_courses;
+
+                foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
+                    $summary = get_summary($course->summary);
+                    $iconimg = 'fa-bolt';
+                    $bgcolor = '#6E81BE';
+                    if ($region) {
+                        $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    } else {
+                        $content .= get_list_course($course, $USER, $iconimg);
+                    }
+                }
+            }
+            
 
             $content .= $region ? '</div>' : '</ul>';
+
         }
 
         if (!empty($coursespopular)) {
+            $num_courses = count($coursespopular); 
 
             // Most popular section
             
             if ($region) {
                 $content .= '<div mt-2><h5>'.get_string('title2', 'block_recommender').'</h5></div>';
                 $content .= '<div><h6>'.get_string('subtitle2', 'block_recommender').'</h6></div>';
-                $content .= '<div class="card-deck d-flex justify-content-between">';
+                $content .= '<div class="card-deck d-flex justify-content-between w-100">';
             } else {
-                $content .= '<div><h5>'.get_string('title2', 'block_recommender').'</h5><p>'.get_string('subtitle2', 'block_recommender').'</p></div>';
-                $content .= '<ul class="mb-0">';
+                $content .= '<div><h5>'.get_string('title2', 'block_recommender').'</h5>';
+                // $content .= '<p>'.get_string('subtitle2', 'block_recommender').'</p>';
+                $content .= '</div>';
+                $content .= '<ul class="mb-0 mt-2"">';
             }
 
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
@@ -124,19 +148,37 @@ class block_recommender extends block_base {
                     $content .= get_list_course($course, $USER, $iconimg);
                 }
             }
+            if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
+                $difference = $limit - $num_courses;
+
+                foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
+                    $summary = get_summary($course->summary);
+                    $iconimg = 'fa-thumbs-up';
+                    $bgcolor = '#9CCF65';
+                    if ($region) {
+                        $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    } else {
+                        $content .= get_list_course($course, $USER, $iconimg);
+                    }
+                }
+            }
 
             $content .= $region ? '</div>' : '</ul>';
         }
     
         if (!empty($coursesrelated)) {
+            $num_courses = count($coursesrelated); 
+
 
             if ($region) {
                 $content .= '<div mt-2><h5>'.get_string('title3', 'block_recommender').'</h5></div>';
                 $content .= '<div><h6>'.get_string('subtitle3', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between">';
             } else {
-                $content .= '<div><h5>'.get_string('title3', 'block_recommender').'</h5><p>'.get_string('subtitle3', 'block_recommender').'</p></div>';
-                $content .= '<ul class="mb-0">';
+                $content .= '<div class="mb-2" ><h5>'.get_string('title3', 'block_recommender').'</h5>';
+                // $content .= '<p>'.get_string('subtitle3', 'block_recommender').'</p>';
+                $content .= '</div>';
+                $content .= '<ul class="mb-0 mt-2"">';
             }
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
@@ -147,6 +189,20 @@ class block_recommender extends block_base {
                     $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
                 } else {
                     $content .= get_list_course($course, $USER, $iconimg);
+                }
+            }
+            if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
+                $difference = $limit - $num_courses;
+
+                foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
+                    $summary = get_summary($course->summary);
+                    $iconimg = 'fa-star';
+                    $bgcolor = '#C65D52';
+                    if ($region) {
+                        $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    } else {
+                        $content .= get_list_course($course, $USER, $iconimg);
+                    }
                 }
             }
 
