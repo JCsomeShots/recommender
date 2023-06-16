@@ -29,6 +29,7 @@ require_once("{$CFG->libdir}/blocklib.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/courserating.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/userenrol.php");
 require_once("{$CFG->dirroot}/blocks/recommender/classes/query/coursesrelated.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/helpers/printhtml.php");
 require_once("{$CFG->dirroot}/blocks/recommender/course_click.php");
 require_once("{$CFG->dirroot}/blocks/recommender/model_recommender.php");
 require_once(__DIR__.'/../../config.php');
@@ -77,61 +78,79 @@ class block_recommender extends block_base {
         if (!empty($coursessuggested)) {
 
             // Suggested courses section
-            $content .= '<div><h5>Suggested courses</h5></div>';
-            $content .= '<div><h6>Subtitle</h6></div>';
-
             if ($region) {
-                $content .= '<div class="card-deck">';
+                $content .= '<div mt-2><h5>'.get_string('title1', 'block_recommender').'</h5></div>';
+                $content .= '<div><h6>'.get_string('subtitle1', 'block_recommender').'</h6></div>';
+                $content .= '<div class="card-deck d-flex justify-content-between">';
+            } else {
+                $content .= '<div><h5>'.get_string('title1', 'block_recommender').'</h5><p>'.get_string('subtitle1', 'block_recommender').'</p></div>';
+                $content .= '<ul class="mb-0">';
             }
 
             foreach (array_slice($coursessuggested, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-bolt';
                 $bgcolor = '#6E81BE';
-                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+                if ($region) {
+                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                } else {
+                    $content .= get_list_course($course, $USER, $iconimg);
+                }
             }
 
-            $content .= $region ? '</div>' : '';
+            $content .= $region ? '</div>' : '</ul>';
         }
 
         if (!empty($coursespopular)) {
 
             // Most popular section
-            $content .= '<div mt-2><h5>Most popular</h5></div>';
-            $content .= '<div><h6>Subtitle</h6></div>';
-
+            
             if ($region) {
+                $content .= '<div mt-2><h5>'.get_string('title2', 'block_recommender').'</h5></div>';
+                $content .= '<div><h6>'.get_string('subtitle2', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between">';
+            } else {
+                $content .= '<div><h5>'.get_string('title2', 'block_recommender').'</h5><p>'.get_string('subtitle2', 'block_recommender').'</p></div>';
+                $content .= '<ul class="mb-0">';
             }
 
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-thumbs-up';
                 $bgcolor = '#9CCF65';
-                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+                if ($region) {
+                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                } else {
+                    $content .= get_list_course($course, $USER, $iconimg);
+                }
             }
 
-            $content .= $region ? '</div>' : '';
+            $content .= $region ? '</div>' : '</ul>';
         }
     
         if (!empty($coursesrelated)) {
 
-            // Specials for you section
-            $content .= '<div mt-2><h5>Specials for you</h5></div>';
-            $content .= '<div><h6>Subtitle</h6></div>';
-
             if ($region) {
-                $content .= '<div class="card-deck">';
+                $content .= '<div mt-2><h5>'.get_string('title3', 'block_recommender').'</h5></div>';
+                $content .= '<div><h6>'.get_string('subtitle3', 'block_recommender').'</h6></div>';
+                $content .= '<div class="card-deck d-flex justify-content-between">';
+            } else {
+                $content .= '<div><h5>'.get_string('title3', 'block_recommender').'</h5><p>'.get_string('subtitle3', 'block_recommender').'</p></div>';
+                $content .= '<ul class="mb-0">';
             }
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-star';
                 $bgcolor = '#C65D52';
-                $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $region, $iconimg, $bgcolor);
+                if ($region) {
+                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                } else {
+                    $content .= get_list_course($course, $USER, $iconimg);
+                }
             }
 
-            $content .= $region ? '</div>' : '';
+            $content .= $region ? '</div>' : '</ul>';
 
             $this->content = new stdClass();
             $this->content->text = $content;
@@ -205,32 +224,6 @@ class block_recommender extends block_base {
         return ['all' => true];
     }
 
-    /**
-     * To Save configuration from settings.
-     */
-    public function instance_config_save($data, $nolongerused = false) {
-
-        global $CFG;
-            // $instanceconfig = $this->instance_config();
-            // $instanceconfig->defaultweight = -3;
-
-    }
-
-    /**
-     * To get the key from settings.
-     */
-    public function instance_config_key($data, $nolongerused = false) {
-        global $CFG;
-        
-        if (!empty($CFG->block_recomender_apikey)) {
-            // && $CFG->block_helloworld_allowhtml == '1'
-            // $data->text = strip_tags($data->text);
-            get_organization($data);
-        } 
-    
-        // Default implementation defined in the main class.
-        // return parent::instance_config_save($data,$nolongerused);
-    }
 
     public function get_cover_images($id){
         $courseid = $id;
@@ -240,95 +233,4 @@ class block_recommender extends block_base {
         $coverimg = $matches['src'][0];
         return $coverimg;
     }
-}
-
-function countthreewords($texto) {
-    // Separar el texto en palabras usando como delimitador el espacio (' ')
-    $palabras = explode(' ', $texto);
-    
-        // Contar las primeras tres palabras
-        $n_palabras = min(count($palabras), 3);
-    
-        // Armar un nuevo arreglo con las primeras tres palabras
-        $primeras_palabras = array_slice($palabras, 0, $n_palabras);
-    
-        // Unir las palabras en un string
-    $texto_cortado = implode(' ', $primeras_palabras);
-
-    // Devolver el texto cortado
-    return $texto_cortado;
-} 
-
-// Helper functions.
-
-function get_summary($summary) {
-    if (!empty($summary)) {
-        // $summary = $summary;
-        $summary = preg_replace('/<[^>]*>/', '', $summary);
-        if (mb_detect_encoding($summary) !== 'UTF-8') {
-            $summary = mb_convert_encoding($summary, 'UTF-8', 'ISO-8859-1');
-        }
-        // $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1));
-        $summary = substr($summary, 0, strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ', strpos($summary, ' ') + 1) + 1) + 1) + 1)) . ' ...';
-
-    } else {
-        $summary = '';
-    }
-    return $summary;
-}
-
-function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, $region, $iconimg, $bgcolor) {
-    // $card = '<div class="card mb-3 rounded border border-primary mr-3">';
-
-    
-    if ($region) {
-        $card = '<div class="card mb-3 rounded border border-primary mr-3';
-        $card .= ' card-sm'; 
-        $iconsize = 'fa-3x';
-    } else {
-        $card = '<div class="card rounded border border-primary mr-3';
-        $iconsize = 'fa-2x';
-    }
-
-    $card .= '">';
-    $card .= '<div class="card-body border rounded-top" style="background-color:'.$bgcolor.';">';
-
-    if (!$region) { 
-        $card .= '<div style="background-color:'.$bgcolor.';" class="d-flex align-item-center justify-content-center">';
-        $icon = '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
-    } else {
-        $card .= '<div style="background-color:'.$bgcolor.';">';
-        $icon = '<i class="fa '.$iconsize.' m-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
-    }
-
-    $card .= $icon;
-    $card .= '<h5 class="card-title text-white text-center">'.countthreewords($course->fullname).'</h5>';
-    $card .= $region ? '<p class="card-text text-center text-white  ">'.$summary.'</p>' : '';
-
-    $card .= '</div>';
-    $card .= '</div>';
-
-    $param = new stdClass();
-    $param->user_id = $USER->id;
-    $param->course_id = $course->courseid;
-    if (!$region) {
-        $param->title = $course->fullname;
-        $param->region = $region;
-    }
-    $clickform->set_data($param);
-    $card .= $clickform->render();
-    $card .= '</div>';
-
-    if (!$click_saved && $fromform = $clickform->get_data()) {
-        var_dump($fromform->course_id);
-        if (!$check) {
-            require_sesskey();
-            $clickform->save_clicks($fromform->user_id, $fromform->course_id);
-            $clickform->redirect($fromform->course_id);
-            $check = true;
-            $click_saved = true;
-        }
-    }
-
-    return $card;
 }

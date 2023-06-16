@@ -27,6 +27,7 @@
 require_once(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/formslib.php');
 require_once("{$CFG->dirroot}/blocks/recommender/lib.php");
+require_once("{$CFG->dirroot}/blocks/recommender/classes/helpers/printhtml.php");
 /**
  * To add hidden fields.
  */
@@ -43,28 +44,18 @@ class course_click extends moodleform {
         $mform->addElement('hidden', 'course_id');
         $mform->settype('course_id', PARAM_INT);
 
-        $mform->addElement('hidden', 'title', $this->_customdata['title']);
-        $mform->setType('title', PARAM_TEXT);
-        $mform->addElement('hidden', 'region', $this->_customdata['region']);
-        $mform->setType('region', PARAM_TEXT);
-
-        $button_title = ($this->_customdata['region']) ? get_string('go', 'block_recommender') : $this->_customdata['title'];
         $button = '<div class="d-flex justify-content-center my-2">';
-        $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.$button_title.'</button> ';
+        $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.get_string('go', 'block_recommender').'</button> ';
         $button .= '</div>';
         $mform->addElement('html', $button);
         
     }
-    // $button = '<div class="d-flex justify-content-center my-2">';
-    // $button .= '<button class="btn btn-light btn-outline-dark rounded border-white">'.get_string('go', 'block_recommender').'</button> ';
-    // $button .= '</div>';
 
     /**
      * to redirect to forum_review
      * @return Void .
      */
     public function redirect($courseid) {
-        global $PAGE;
 
         var_dump($courseid);
         // if ($PAGE->course->id != $courseid && empty($courseid)) {

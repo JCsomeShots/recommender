@@ -54,7 +54,7 @@ $string['allowhtml_desc'] = 'Disabled html in recommender block';
 $string['evententrycreated'] = 'Create_clicks_block';
 
 // Button form.
-$string['go'] = 'Register';
+$string['go'] = 'Access';
 
 // View & form.
 $string['textfields'] = 'Specific course (max 3)';
@@ -66,3 +66,12 @@ $string['courseselect'] = 'Select a course';
 $string['courseone'] = 'Course 1';
 $string['coursetwo'] = 'Course 2';
 $string['coursethree'] = 'Course 3';
+
+// title & Subtitle.
+$string['title1'] = 'Suggested courses';
+$string['title2'] = 'Most popular';
+$string['title3'] = 'Specials for you';
+$string['subtitle1'] = 'Courses suggested by your coordinator. These courses are part of your carrier plan.';
+$string['subtitle2'] = 'Here you can find the most followed courses in the platform.';
+$string['subtitle3'] = 'According to your preferences and the previous courses you have followed, here you can find courses that might interesting for you.';
+
