@@ -158,13 +158,12 @@ function get_list_course($course, $USER, $iconimg) {
     $idcourse = $course->courseid;
     $url = new moodle_url('/course/view.php', array('id' => $course->id));
     $iconsize = 'fa-sm';
-    $icon = '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.8; color:black;"></i>';
     $text = '';
     $text .= '<a href="'.$url.'" >';
     // $text .= '<a href="#" onclick="save_clicks_anchor(\''.$iduser.'\',\''.$idcourse.'\')">';
-    $text .= '<li class="d-flex align-item-center justify-content-start">';
-    $text .= $icon;
-    $text .= '<p class="card-title text-center" style="font-size:12px;">'.countthreewords($course->fullname).'</p>';
+    $text .= '<li class="d-flex align-items-center justify-content-star">';
+    $text .= '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.8; color:black;"></i>';
+    $text .= '<p class="card-title text-center pt-2" style="font-size:12px;">'.countthreewords($course->fullname).'</p>';
     $text .= '</li>';
     $text .= '</a>';
 

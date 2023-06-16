@@ -86,10 +86,10 @@ class block_recommender extends block_base {
                 $content .= '<div><h6>'.get_string('subtitle1', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between">';
             } else {
-                $content .= '<div class="mb-2"><h5>'.get_string('title1', 'block_recommender').'</h5>';
+                $content .= '<div class="pb-2"><h5>'.get_string('title1', 'block_recommender').'</h5>';
                 // $content .= '<p>'.get_string('subtitle1', 'block_recommender').'</p>';
                 $content .= '</div>';
-                $content .= '<ul class="mb-0 mt-2"">';
+                $content .= '<ul class="mb-0">';
             }
 
             foreach (array_slice($coursessuggested, 0, $limit) as $course) {
@@ -132,10 +132,10 @@ class block_recommender extends block_base {
                 $content .= '<div><h6>'.get_string('subtitle2', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between w-100">';
             } else {
-                $content .= '<div><h5>'.get_string('title2', 'block_recommender').'</h5>';
+                $content .= '<div class="pb-2" ><h5>'.get_string('title2', 'block_recommender').'</h5>';
                 // $content .= '<p>'.get_string('subtitle2', 'block_recommender').'</p>';
                 $content .= '</div>';
-                $content .= '<ul class="mb-0 mt-2"">';
+                $content .= '<ul class="mb-0">';
             }
 
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
@@ -175,10 +175,10 @@ class block_recommender extends block_base {
                 $content .= '<div><h6>'.get_string('subtitle3', 'block_recommender').'</h6></div>';
                 $content .= '<div class="card-deck d-flex justify-content-between">';
             } else {
-                $content .= '<div class="mb-2" ><h5>'.get_string('title3', 'block_recommender').'</h5>';
+                $content .= '<div class="pb-2" ><h5>'.get_string('title3', 'block_recommender').'</h5>';
                 // $content .= '<p>'.get_string('subtitle3', 'block_recommender').'</p>';
                 $content .= '</div>';
-                $content .= '<ul class="mb-0 mt-2"">';
+                $content .= '<ul class="mb-0"">';
             }
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
