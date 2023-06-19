@@ -65,9 +65,11 @@ class block_recommender extends block_base {
         $heightlimit = 'height: 5px';
 
         recommenderpython();
+        
         $coursesrelated =  get_related_courses(); 
         $coursesnotenrol = notenrol();   
-        $coursespopular = best_ratingcourse();
+        // $coursespopular = best_ratingcourse();
+        $coursespopular = get_courses_sorted_by_enrollment();
         $coursessuggested = suggested_table();
         $clickform = new course_click();
         $param = new stdClass();
@@ -139,13 +141,20 @@ class block_recommender extends block_base {
             }
 
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
-                $summary = get_summary($course->summary);
+                // var_dump($coursespopular);
+                // var_dump($course);
+                // var_dump($course->summary);
+                $courseA = new stdClass;
+                $courseA->id = $course['id'];
+                $courseA->fullname = $course['fullname'];
+
+                $summary = get_summary($course['summary']);
                 $iconimg = 'fa-thumbs-up';
                 $bgcolor = '#9CCF65';
                 if ($region) {
-                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    $content .= get_card($courseA, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
                 } else {
-                    $content .= get_list_course($course, $USER, $iconimg);
+                    $content .= get_list_course($courseA, $USER, $iconimg);
                 }
             }
             if ($num_courses < $limit) { // Verificar si hay menos de limit cursos

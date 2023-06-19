@@ -77,7 +77,7 @@ function save_clicks_anchor($iduser, $idcourse) {
 
 function redirect_course($courseid) {
 
-    var_dump($courseid);
+    // var_dump($courseid);
     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
 }
 
@@ -115,7 +115,7 @@ function get_summary($summary) {
 }
 
 function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, $iconimg, $bgcolor) {
-    var_dump($course->courseid );
+    // var_dump($course->courseid );
 
         $card = '<div class="card mb-3 rounded border border-primary mr-3';
         $card .= ' card-sm'; 
@@ -138,7 +138,7 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
         $card .= '</div>';
 
         if (!$click_saved && $fromform = $clickform->get_data()) {
-            var_dump($fromform->course_id);
+            // var_dump($fromform->course_id);
             if (!$check) {
                 require_sesskey();
                 $clickform->save_clicks($fromform->user_id, $fromform->course_id);
@@ -151,7 +151,7 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
 }
 
 function get_list_course($course, $USER, $iconimg) {
-    var_dump($course->courseid );
+    // var_dump($course->courseid );
 
 
     $iduser = $USER->id;

@@ -41,8 +41,90 @@ function best_ratingcourse() {
     $courses = $DB->get_records_sql($sql);
 
     return $courses;
-    
+
 }
+
+function get_courses_sorted_by_enrollment() {
+    global $DB;
+
+    // Obtener todos los cursos
+    $courses = $DB->get_records('course');
+
+    // Inicializar el arreglo de recuento de usuarios
+    $course_user_counts = array();
+
+    foreach ($courses as $course) {
+        // Obtener el contexto del curso
+        $course_context = context_course::instance($course->id);
+
+        // Contar usuarios inscritos en el curso
+        $users = get_enrolled_users($course_context);
+        $course_user_counts[] = array(
+            'id' => $course->id,
+            'fullname' => $course->fullname, 
+            'summary' => $course->summary,
+            'enrollment_count' => count($users)
+        );
+    }
+
+    // Ordenar cursos por número de usuarios inscritos en orden descendente
+    usort($course_user_counts, function ($a, $b) {
+        return $b['enrollment_count'] - $a['enrollment_count'];
+    });
+
+    // print_object($course_user_counts);
+    return $course_user_counts;
+}
+
+
+
+
+// function get_courses_sorted_by_enrollment() {
+//     global $DB;
+
+//     // Crear objeto vacío
+//     $course_object = new stdClass();
+
+//     // Obtener todos los cursos
+//     $courses = $DB->get_records('course');
+
+//     // Inicializar el arreglo de recuento de usuarios
+//     $course_user_counts = array();
+
+//     foreach ($courses as $course) {
+//         // Obtener el contexto del curso
+//         $course_context = context_course::instance($course->id);
+
+//         // Contar usuarios inscritos en el curso
+//         $users = get_enrolled_users($course_context);
+//         $course_user_counts[] = array(
+//             'id' => $course->id,
+//             'fullname' => $course->fullname, 
+//             'summary' => $course->summary,
+//             'enrollment_count' => count($users)
+//         );
+//     }
+
+//     // Ordenar cursos por número de usuarios inscritos en orden descendente
+//     usort($course_user_counts, function ($a, $b) {
+//         return $b['enrollment_count'] - $a['enrollment_count'];
+//     });
+
+//     // Agregar los resultados a las propiedades del objeto
+//     $course_object->course_user_counts = $course_user_counts;
+
+//     return $course_object;
+// }
+
+
+
+
+
+
+
+
+
+
 
 // function get_top_completed_courses() {
 //     global $DB;
