@@ -156,7 +156,7 @@ function get_list_course($course, $USER, $iconimg) {
 
     $iduser = $USER->id;
     $idcourse = $course->courseid;
-    $url = new moodle_url('/course/view.php', array('id' => $course->id));
+    $url = new moodle_url('/course/view.php', array('id' => $course->courseid));
     $iconsize = 'fa-sm';
     $text = '';
     $text .= '<a href="'.$url.'" >';

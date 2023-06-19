@@ -145,7 +145,7 @@ class block_recommender extends block_base {
                 // var_dump($course);
                 // var_dump($course->summary);
                 $courseA = new stdClass;
-                $courseA->id = $course['id'];
+                $courseA->courseid = $course['id'];
                 $courseA->fullname = $course['fullname'];
 
                 $summary = get_summary($course['summary']);
