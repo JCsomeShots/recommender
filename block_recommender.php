@@ -175,8 +175,9 @@ class block_recommender extends block_base {
             $content .= $region ? '</div>' : '</ul>';
         }
     
-        if (!empty($coursesrelated)) {
-            $num_courses = count($coursesrelated); 
+        if (!empty($coursesnotenrol)) {
+        // if (!empty($coursesrelated)) {
+            // $num_courses = count($coursesrelated); 
 
 
             if ($region) {
@@ -190,7 +191,8 @@ class block_recommender extends block_base {
                 $content .= '<ul class="mb-0"">';
             }
 
-            foreach (array_slice($coursesrelated, 0, $limit) as $course) {
+            // foreach (array_slice($coursesrelated, 0, $limit) as $course) {
+            foreach (array_slice($coursesnotenrol, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-star';
                 $bgcolor = '#C65D52';
@@ -200,20 +202,20 @@ class block_recommender extends block_base {
                     $content .= get_list_course($course, $USER, $iconimg);
                 }
             }
-            if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
-                $difference = $limit - $num_courses;
+            // if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
+            //     $difference = $limit - $num_courses;
 
-                foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
-                    $summary = get_summary($course->summary);
-                    $iconimg = 'fa-star';
-                    $bgcolor = '#C65D52';
-                    if ($region) {
-                        $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
-                    } else {
-                        $content .= get_list_course($course, $USER, $iconimg);
-                    }
-                }
-            }
+            //     foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
+            //         $summary = get_summary($course->summary);
+            //         $iconimg = 'fa-star';
+            //         $bgcolor = '#C65D52';
+            //         if ($region) {
+            //             $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+            //         } else {
+            //             $content .= get_list_course($course, $USER, $iconimg);
+            //         }
+            //     }
+            // }
 
             $content .= $region ? '</div>' : '</ul>';
 

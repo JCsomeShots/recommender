@@ -124,12 +124,12 @@ function recommenderpython() {
     // var_dump($predict);
     // var_dump($predict);
     // var_dump($predict2);
-        // print_object($predict);
+        print_object($predict2);
     $result = predict_recommender($predict2);
     save_related_courses($result);
-//     var_dump($result);
+    // var_dump($result);
 //     var_dump(gettype($result));
-//     print_object($result);
+    // print_object($result);
 }
 
 function save_related_courses($result) {
@@ -137,28 +137,30 @@ function save_related_courses($result) {
     global $DB;
     $table_name = 'block_recommender_descrip';
     $data = array();
-    foreach($result as $key => $value) {
-        $courses = array();
-        // var_dump($value);
-        // var_dump(gettype($value));
-        foreach ($value as $item) {
-            array_push($courses, $item);
-        }
+    // var_dump($result);
+    // var_dump(gettype($result));
+    // foreach($result as $key => $value) {
+    //     $courses = array();
+    //     // var_dump($value);
+    //     // var_dump(gettype($value));
+    //     foreach ($value as $item) {
+    //         array_push($courses, $item);
+    //     }
 
-        $record = new stdClass();
-        $record->courseid = $key;
-        $related_courses_serialized = serialize($courses);
-        $record->related_courses = $related_courses_serialized;
+    //     $record = new stdClass();
+    //     $record->courseid = $key;
+    //     $related_courses_serialized = serialize($courses);
+    //     $record->related_courses = $related_courses_serialized;
 
-        $existing = $DB->get_record($table_name, array('courseid' => $key));
+    //     $existing = $DB->get_record($table_name, array('courseid' => $key));
 
-        if ($existing) {
-            $record->id = $existing->id;
-            $DB->update_record($table_name, $record);
-        } else {
-            $DB->insert_record($table_name, $record);
-        }
-    }
+    //     if ($existing) {
+    //         $record->id = $existing->id;
+    //         $DB->update_record($table_name, $record);
+    //     } else {
+    //         $DB->insert_record($table_name, $record);
+    //     }
+    // }
 
 }
 
