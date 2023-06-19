@@ -64,9 +64,9 @@ class block_recommender extends block_base {
         $limit = $region ? 3 : 3;
         $heightlimit = 'height: 5px';
 
-        recommenderpython();
+        // recommenderpython();
         
-        $coursesrelated =  get_related_courses(); 
+        // $coursesrelated =  get_related_courses(); 
         $coursesnotenrol = notenrol();   
         // $coursespopular = best_ratingcourse();
         $coursespopular = get_courses_sorted_by_enrollment();
