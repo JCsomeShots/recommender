@@ -65,6 +65,8 @@ function notenrol(){
     global $DB, $USER;
 
     $current_user_id = $USER->id;
+    $categoryid = 1;
+    // $categoryid = 42;
 
     // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
@@ -74,15 +76,19 @@ function notenrol(){
                 FROM {user_enrolments} ue
                 JOIN {enrol} e ON e.id = ue.enrolid
                 WHERE e.courseid = c.id
-                AND ue.userid = :current_user_id
-            )
+                AND ue.userid = :current_user_id   
+                
+            ) AND c.category = :categoryid
             ORDER BY RAND()
             LIMIT 3";
-    $params = ['current_user_id' => $current_user_id];
+    $params = [
+        'current_user_id' => $current_user_id,
+        'categoryid' => $categoryid
+    ];
 
     // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
     $results = $DB->get_records_sql($sql, $params);
-
+// var_dump($results);
     return $results;
 }
 
@@ -239,6 +245,8 @@ function suggested_table() {
 
     global $DB, $USER;
     $current_user_id = $USER->id;
+    $categoryid = 1;
+    // $categoryid = 42;
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
             FROM {course} c
             JOIN {block_recommender_suggested} br ON br.courseid = c.id 
@@ -249,10 +257,14 @@ function suggested_table() {
             --     WHERE e.courseid = c.id
             --     AND ue.userid = :current_user_id
             -- )
+            WHERE c.category = :categoryid
             ORDER BY c.id ASC
             -- LIMIT 3
             ";
-    $params = ['current_user_id' => $current_user_id];
+    $params = [
+        'current_user_id' => $current_user_id,
+        'categoryid' => $categoryid
+    ];
 
     $results = $DB->get_records_sql($sql, $params);
     if (count($results) > 3) {

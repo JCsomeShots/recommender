@@ -49,6 +49,15 @@ function get_courses_sorted_by_enrollment() {
 
     // Obtener todos los cursos
     $courses = $DB->get_records('course');
+    $sql = "SELECT * FROM {course} WHERE category = ?";
+    $params = [
+        'categoryid' => 1
+        // 'categoryid' => 42
+    ];
+
+    $courses = $DB->get_records_sql($sql, $params);
+    // var_dump($courses);
+    
 
     // Inicializar el arreglo de recuento de usuarios
     $course_user_counts = array();

@@ -157,20 +157,20 @@ class block_recommender extends block_base {
                     $content .= get_list_course($courseA, $USER, $iconimg);
                 }
             }
-            if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
-                $difference = $limit - $num_courses;
+            // if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
+            //     $difference = $limit - $num_courses;
 
-                foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
-                    $summary = get_summary($course->summary);
-                    $iconimg = 'fa-thumbs-up';
-                    $bgcolor = '#9CCF65';
-                    if ($region) {
-                        $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
-                    } else {
-                        $content .= get_list_course($course, $USER, $iconimg);
-                    }
-                }
-            }
+            //     foreach (array_slice($coursesnotenrol, 0, $difference) as $course) {
+            //         $summary = get_summary($course->summary);
+            //         $iconimg = 'fa-thumbs-up';
+            //         $bgcolor = '#9CCF65';
+            //         if ($region) {
+            //             $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+            //         } else {
+            //             $content .= get_list_course($course, $USER, $iconimg);
+            //         }
+            //     }
+            // }
 
             $content .= $region ? '</div>' : '</ul>';
         }
