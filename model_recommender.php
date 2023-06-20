@@ -114,12 +114,12 @@ function recommenderpython() {
     $courses = get_coursesummary();
     $sql = "SELECT * FROM {course} WHERE category = ?";
     $params = [
-        'categoryid' => 1
-        // 'categoryid' => 42
+        // 'categoryid' => 1
+        'categoryid' => 42
     ];
 
     $courses = $DB->get_records_sql($sql, $params);
-    
+
     $predict = array();
     foreach ($courses as $c) { 
         $fullname = !empty(trim($c->fullname)) ? clean_recommender($c->fullname) : "";        
