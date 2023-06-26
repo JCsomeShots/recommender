@@ -48,11 +48,11 @@ function get_courses_sorted_by_enrollment() {
     global $DB;
 
     // Obtener todos los cursos
-    $courses = $DB->get_records('course');
-    $sql = "SELECT * FROM {course} WHERE category = ?";
+    // $courses = $DB->get_records('course');
+    $sql = "SELECT * FROM {course} WHERE category = :categoryid";
     $params = [
-        // 'categoryid' => 1
-        'categoryid' => 42
+        'categoryid' => 1
+        // 'categoryid' => 42
     ];
 
     $courses = $DB->get_records_sql($sql, $params);

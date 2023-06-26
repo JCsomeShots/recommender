@@ -29,38 +29,47 @@ function get_related_courses() {
     global $USER, $DB;
 
     $userid = $USER->id;
-
-    $courses = enrol_get_users_courses($userid, true);
-    // var_dump($courses);
     $courseids = array();
     $related_courses = array();
-    foreach ($courses as $course) {
-        // var_dump($course->id);
-        // var_dump($course->fullname);
-        $courseids[] = $course->id;
+    $courses = array();
 
-        if ($description = $DB->get_record('block_recommender_descrip', array('courseid' => $course->id))) {
-            $related_courses_course = explode(',', $description->related_courses);
-            $related_courses_course = array_slice($related_courses_course, 0, 5); 
-            foreach ($related_courses_course as $related_course) {
-                array_push($related_courses, $related_course);
-            }
-        }
+    if (isset($userid) && is_numeric($userid)) { 
+        $courses = enrol_get_users_courses($userid, true);
     }
 
-    $related_courses = array_unique($related_courses);
-    $related_course_arr = unserialize($related_course);
-    $related_course_arr = array_map('intval', $related_course_arr);
-    // var_dump($related_course_arr);
-    $courseids = array_map('intval', $courseids);
-    // var_dump($courseids);
-
-    $related_courses = array_diff($related_course_arr, $courseids);
-
-    // print_object($related_courses);
-    $result = get_courses_list($related_courses);
-    // print_object($result);
-    return $result;
+    if (!empty($courses)) {
+        // var_dump($courses);
+        foreach ($courses as $course) {
+            // var_dump($course->id);
+            // var_dump($course->fullname);
+            $courseids[] = $course->id;
+    
+            if ($description = $DB->get_record('block_recommender_descrip', array('courseid' => $course->id))) {
+                $related_courses_course = explode(',', $description->related_courses);
+                $related_courses_course = array_slice($related_courses_course, 0, 5); 
+                foreach ($related_courses_course as $related_course) {
+                    array_push($related_courses, $related_course);
+                }
+            }
+        }
+    
+        $related_courses = array_unique($related_courses);
+        $related_course_arr = unserialize($related_course);
+        $related_course_arr = array_map('intval', $related_course_arr);
+        // var_dump($related_course_arr);
+        $courseids = array_map('intval', $courseids);
+        // var_dump($courseids);
+    
+        $related_courses = array_diff($related_course_arr, $courseids);
+    
+        // print_object($related_courses);
+        $result = get_courses_list($related_courses);
+        // print_object($result);
+        return $result;
+    } else {
+        $result = [];
+        return $result;
+    }
 
 }
 
