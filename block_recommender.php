@@ -64,7 +64,7 @@ class block_recommender extends block_base {
         $limit = $region ? 3 : 3;
         $heightlimit = 'height: 5px';
 
-        // recommenderpython();
+        recommenderpython();
         $coursesrelated =  get_related_courses(); 
         // $coursesrelated =  notenrol(); 
         $coursesnotenrol = notenrol();   
@@ -80,7 +80,7 @@ class block_recommender extends block_base {
     
         if (!empty($coursessuggested)) {
             $num_courses = count($coursessuggested); 
-            var_dump($coursessuggested);
+            // var_dump($coursessuggested);
 
 
             // Suggested courses section

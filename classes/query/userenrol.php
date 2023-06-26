@@ -257,7 +257,7 @@ function suggested_table() {
             --     WHERE e.courseid = c.id
             --     AND ue.userid = :current_user_id
             -- )
-            WHERE c.category = :categoryid
+            -- WHERE c.category = :categoryid
             ORDER BY c.id ASC
             -- LIMIT 3
             ";
