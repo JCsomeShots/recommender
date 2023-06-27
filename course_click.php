@@ -57,7 +57,7 @@ class course_click extends moodleform {
      */
     public function redirect($courseid) {
 
-        var_dump($courseid);
+        // var_dump($courseid);
         // if ($PAGE->course->id != $courseid && empty($courseid)) {
         //     redirect(new moodle_url('/course/view.php', array('id' => $courseid)));
         // }    
