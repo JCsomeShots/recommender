@@ -123,7 +123,7 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
         $card .= '<div class="card-body border rounded-top" style="background-color:'.$bgcolor.';">';
         $iconsize = 'fa-3x';
         $card .= '<div style="background-color:'.$bgcolor.';">';
-        $icon = '<i class="fa '.$iconsize.' m-2 ml-3 '.$iconimg.'" style="opacity:0.2; color:white;"></i>';
+        $icon = '<i class="fa '.$iconsize.' m-2 ml-3 '.$iconimg.'" style="opacity:0.5; color:white;"></i>';
         $card .= $icon;
         $card .= '<h5 class="card-title text-white text-center">'.countthreewords($course->fullname).'</h5>';
         $card .= '<p class="card-text text-center text-white  ">'.$summary.'</p>' ;

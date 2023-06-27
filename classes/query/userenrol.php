@@ -65,8 +65,8 @@ function notenrol(){
     global $DB, $USER;
 
     $current_user_id = $USER->id;
-    // $categoryid = 1;
-    $categoryid = 42;
+    $categoryid = 1;
+    // $categoryid = 42;
 
     // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
@@ -245,8 +245,8 @@ function suggested_table() {
 
     global $DB, $USER;
     $current_user_id = $USER->id;
-    // $categoryid = 1;
-    $categoryid = 42;
+    $categoryid = 1;
+    // $categoryid = 42;
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
             FROM {course} c
             JOIN {block_recommender_suggested} br ON br.courseid = c.id 

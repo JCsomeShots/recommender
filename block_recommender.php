@@ -95,16 +95,18 @@ class block_recommender extends block_base {
                 $content .= '</div>';
                 $content .= '<ul class="mb-0">';
             }
-
+            $count = 0;
+            $bgcolor = ['#6E81BE' , '#7387C7', '#566494'];
             foreach (array_slice($coursessuggested, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-bolt';
-                $bgcolor = '#6E81BE';
+                // $bgcolor = '#6E81BE';
                 if ($region) {
-                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor[$count]);
                 } else {
                     $content .= get_list_course($course, $USER, $iconimg);
                 }
+                $count++;
             }
             // if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
             //     $difference = $limit - $num_courses;
@@ -142,6 +144,8 @@ class block_recommender extends block_base {
                 $content .= '<ul class="mb-0">';
             }
 
+            $bgcolor = ['#6F9448' ,'#96C761', '#A1D669'];
+            $count = 0;
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
                 // var_dump($coursespopular);
                 // var_dump($course);
@@ -152,12 +156,15 @@ class block_recommender extends block_base {
 
                 $summary = get_summary($course['summary']);
                 $iconimg = 'fa-thumbs-up';
-                $bgcolor = '#9CCF65';
+                // $bgcolor = '#9CCF65';
+                // $bgcolor = '#9CCF65';
+
                 if ($region) {
-                    $content .= get_card($courseA, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    $content .= get_card($courseA, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor[$count]);
                 } else {
                     $content .= get_list_course($courseA, $USER, $iconimg);
                 }
+                $count++;
             }
             // if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
             //     $difference = $limit - $num_courses;
@@ -192,17 +199,20 @@ class block_recommender extends block_base {
                 $content .= '</div>';
                 $content .= '<ul class="mb-0"">';
             }
+            $count = 0;
+            $bgcolor = ['#D96659', '#94453D','#C65D52'];
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
             // foreach (array_slice($coursesnotenrol, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-star';
-                $bgcolor = '#C65D52';
+                // $bgcolor = '#C65D52';
                 if ($region) {
-                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor);
+                    $content .= get_card($course, $summary, $clickform, $USER, $check, $click_saved, $iconimg, $bgcolor[$count]);
                 } else {
                     $content .= get_list_course($course, $USER, $iconimg);
                 }
+                $count++;
             }
             // if ($num_courses < $limit) { // Verificar si hay menos de limit cursos
             //     $difference = $limit - $num_courses;
