@@ -96,7 +96,8 @@ class block_recommender extends block_base {
                 $content .= '<ul class="mb-0">';
             }
             $count = 0;
-            $bgcolor = ['#6E81BE' , '#7387C7', '#566494'];
+            // azul normal, claro, oscuro
+            $bgcolor = ['#3F508D', '#6E81BE', '#263154'];
             foreach (array_slice($coursessuggested, 0, $limit) as $course) {
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-bolt';
@@ -144,7 +145,8 @@ class block_recommender extends block_base {
                 $content .= '<ul class="mb-0">';
             }
 
-            $bgcolor = ['#6F9448' ,'#96C761', '#A1D669'];
+            // verde oscuro, normal, claro
+            $bgcolor = ['#496D22','#72AB36' ,'#96C761'];
             $count = 0;
             foreach (array_slice($coursespopular, 0, $limit) as $course) {
                 // var_dump($coursespopular);
@@ -199,8 +201,9 @@ class block_recommender extends block_base {
                 $content .= '</div>';
                 $content .= '<ul class="mb-0"">';
             }
+            // marron claro, oscuro, normal
             $count = 0;
-            $bgcolor = ['#D96659', '#94453D','#C65D52'];
+            $bgcolor = ['#C65D52', '#5C251F','#8A372E'];
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
             // foreach (array_slice($coursesnotenrol, 0, $limit) as $course) {

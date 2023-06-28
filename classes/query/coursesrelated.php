@@ -77,7 +77,7 @@ function get_related_courses() {
 function get_courses_list($courses){
 global $DB;
     $course_list = $DB->get_records_list('course', 'id', $courses);
-    shuffle($course_list);
+    // shuffle($course_list);
     return $course_list;
 
 }
