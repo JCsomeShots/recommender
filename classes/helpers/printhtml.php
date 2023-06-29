@@ -115,7 +115,8 @@ function get_summary($summary) {
 }
 
 function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, $iconimg, $bgcolor) {
-    // var_dump($course->courseid );
+
+    // print_object($course->id);
 
         $card = '<div class="card mb-3 rounded border border-primary mr-3';
         $card .= ' card-sm'; 
@@ -125,14 +126,19 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
         $card .= '<div style="background-color:'.$bgcolor.';">';
         $icon = '<i class="fa '.$iconsize.' m-2 ml-3 '.$iconimg.'" style="opacity:0.5; color:white;"></i>';
         $card .= $icon;
-        $card .= '<h5 class="card-title text-white text-center">'.countthreewords($course->fullname).'</h5>';
+        // $card .= '<h5 class="card-title text-white text-center">'.countthreewords($course->fullname).'</h5>';
+        $card .= '<h5 class="card-title text-white text-center">'.$course->fullname.'</h5>';
         $card .= '<p class="card-text text-center text-white  ">'.$summary.'</p>' ;
         $card .= '</div>';
         $card .= '</div>';
 
         $param = new stdClass();
         $param->user_id = $USER->id;
-        $param->course_id = $course->courseid;
+        if ($course->courseid != null) {
+            $param->course_id = $course->courseid;
+        } else {
+            $param->course_id = $course->id;
+        }
         $clickform->set_data($param);
         $card .= $clickform->render();
         $card .= '</div>';
@@ -152,18 +158,24 @@ function get_card($course, $summary, $clickform, $USER, &$check, &$click_saved, 
 
 function get_list_course($course, $USER, $iconimg) {
     // var_dump($course->courseid );
+    // var_dump($course->id );
 
+    if ($course->courseid != null) {
+        $idcourse = $course->courseid;
+    } else {
+        $idcourse= $course->id;
+    }
 
     $iduser = $USER->id;
-    $idcourse = $course->courseid;
-    $url = new moodle_url('/course/view.php', array('id' => $course->courseid));
+    // $idcourse = $course->courseid;
+    $url = new moodle_url('/course/view.php', array('id' => $idcourse));
     $iconsize = 'fa-sm';
     $text = '';
     $text .= '<a href="'.$url.'" >';
     // $text .= '<a href="#" onclick="save_clicks_anchor(\''.$iduser.'\',\''.$idcourse.'\')">';
     $text .= '<li class="d-flex align-items-center justify-content-star">';
     $text .= '<i class="fa '.$iconsize.' mr-2 ml-3 '.$iconimg.'" style="opacity:0.8; color:black;"></i>';
-    $text .= '<p class="card-title text-center pt-2" style="font-size:12px;">'.countthreewords($course->fullname).'</p>';
+    $text .= '<p class="card-title pt-2" style="font-size:12px;">'.$course->fullname.'</p>';
     $text .= '</li>';
     $text .= '</a>';
 
