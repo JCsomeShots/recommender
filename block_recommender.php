@@ -207,7 +207,7 @@ class block_recommender extends block_base {
 
             foreach (array_slice($coursesrelated, 0, $limit) as $course) {
             // foreach (array_slice($coursesnotenrol, 0, $limit) as $course) {
-                print_object($course->id);
+                // print_object($course->id);
                 $summary = get_summary($course->summary);
                 $iconimg = 'fa-star';
                 // $bgcolor = '#C65D52';
