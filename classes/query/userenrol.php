@@ -65,7 +65,7 @@ function notenrol(){
     global $DB, $USER;
 
     $current_user_id = $USER->id;
-    $categoryid = 1;
+    // $categoryid = 1;
     // $categoryid = 42;
 
     // Consulta SQL modificada para obtener los cursos a los que el usuario no está enrolado
@@ -78,12 +78,17 @@ function notenrol(){
                 WHERE e.courseid = c.id
                 AND ue.userid = :current_user_id   
                 
-            ) AND c.category = :categoryid
-            ORDER BY RAND()
+            ) 
+            -- AND c.category = :categoryid
+            ORDER BY CASE
+                WHEN DBMS_NAME() = 'PostgreSQL' THEN RANDOM()
+                WHEN DBMS_NAME() = 'MySQL' THEN RAND()
+                ELSE RAND() -- Por defecto, usa RAND() en otros sistemas
+            END
             LIMIT 3";
     $params = [
         'current_user_id' => $current_user_id,
-        'categoryid' => $categoryid
+        // 'categoryid' => $categoryid
     ];
 
     // Ejecutar la consulta SQL y obtener los resultados como un array de objetos
@@ -245,28 +250,35 @@ function suggested_table() {
 
     global $DB, $USER;
     $current_user_id = $USER->id;
-    $categoryid = 1;
+    // $categoryid = 1;
     // $categoryid = 42;
     $sql = "SELECT c.id as courseid, c.fullname, c.summary
             FROM {course} c
             JOIN {block_recommender_suggested} br ON br.courseid = c.id 
-            -- WHERE NOT EXISTS (
-            --     SELECT 1
-            --     FROM {user_enrolments} ue
-            --     JOIN {enrol} e ON e.id = ue.enrolid
-            --     WHERE e.courseid = c.id
-            --     AND ue.userid = :current_user_id
-            -- )
-            WHERE c.category = :categoryid
             ORDER BY c.id ASC
-            -- LIMIT 3
             ";
+            
+    // $sql = "SELECT c.id as courseid, c.fullname, c.summary
+    //         FROM {course} c
+    //         JOIN {block_recommender_suggested} br ON br.courseid = c.id 
+    //         -- WHERE NOT EXISTS (
+    //         --     SELECT 1
+    //         --     FROM {user_enrolments} ue
+    //         --     JOIN {enrol} e ON e.id = ue.enrolid
+    //         --     WHERE e.courseid = c.id
+    //         --     AND ue.userid = :current_user_id
+    //         -- )
+    //         -- WHERE c.category = :categoryid
+    //         ORDER BY c.id ASC
+    //         -- LIMIT 3
+    //         ";
     $params = [
         'current_user_id' => $current_user_id,
-        'categoryid' => $categoryid
+        // 'categoryid' => $categoryid
     ];
 
-    $results = $DB->get_records_sql($sql, $params);
+    // $results = $DB->get_records_sql($sql, $params);
+    $results = $DB->get_records_sql($sql);
     if (count($results) > 3) {
         shuffle($results);
         $results = array_slice($results, 0, 3);
