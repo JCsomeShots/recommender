@@ -77,10 +77,11 @@ function get_related_courses() {
 function get_courses_list($courses){
     global $DB;
     // var_dump($courses);
-    // var_dump(gettype($courses));
-    $course_list = $DB->get_records_list('course', 'id', $courses);
-    // shuffle($course_list);
-    // print_object($course_list);
-    return $course_list;
+    if (!empty($courses)) {
+        $course_list = $DB->get_records_list('course', 'id', $courses);
+        // shuffle($course_list);
+        // print_object($course_list);
+        return $course_list;
+    }
 
 }
