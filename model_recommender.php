@@ -112,15 +112,15 @@ function get_coursesummary() {
 function recommenderpython() {
     GLOBAL $DB;
     $courses = get_coursesummary();
-    $sql = "SELECT * FROM {course} WHERE category = ?";
-    // $sql = "SELECT * FROM {course}";
-    $params = [
-        'categoryid' => 1
-        // 'categoryid' => 42
-    ];
+    //$sql = "SELECT * FROM {course} WHERE category = ?";
+    $sql = "SELECT * FROM {course}";
+    // $params = [
+    //     'categoryid' => 1
+    //     // 'categoryid' => 42
+    // ];
 
-    $courses = $DB->get_records_sql($sql, $params);
-    // $courses = $DB->get_records_sql($sql);
+    // $courses = $DB->get_records_sql($sql, $params);
+    $courses = $DB->get_records_sql($sql);
 
     $predict = array();
     foreach ($courses as $c) { 
@@ -138,7 +138,7 @@ function recommenderpython() {
         // print_object($predict2);
         // print_object($predict2);
     $result = predict_recommender($predict2);
-    save_related_courses($result);
+    // save_related_courses($result);
     // var_dump($result);
 //     var_dump(gettype($result));
     // print_object($result);
